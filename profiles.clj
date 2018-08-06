@@ -17,13 +17,16 @@
  :auth {:deploy-repositories [["releases" {:url "https://clojars.org/repo" :sign-releases false}]
                               ["snapshots" :clojars]]
         :repository-auth {#"https://clojars\.org/repo" {:username "vemv"
-                                                        :password #=(eval (System/getenv "CLOJARS_PASSWORD"))}}}
+                                                        :password #=(some-> "CLOJARS_PASSWORD"
+                                                                            System/getenv
+                                                                            eval)}}}
  :emacs-docsolver-backend {:repl-options {:init (user/reset)
                                           :port 45432
                                           :timeout 120000}
-                           :source-paths ^:replace #=(eval (-> "DS_BACKOFFICE_BACKEND_DEV_SOURCE_PATHS"
-                                                               System/getenv
-                                                               read-string))
+                           :source-paths ^:replace #=(some-> "DS_BACKOFFICE_BACKEND_DEV_SOURCE_PATHS"
+                                                             System/getenv
+                                                             read-string
+                                                             eval)
                            :dependencies [[org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]]
                            :plugins [[refactor-nrepl "2.4.0-SNAPSHOT"]
                                      [cider/cider-nrepl "0.16.0"]]}
