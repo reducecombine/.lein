@@ -26,13 +26,13 @@
                                                                             eval)}}}
  :emacs-docsolver-backend {:repl-options {:init (user/reset)
                                           :port 45432
-                                          :timeout 120000}
+                                          :timeout 180000}
                            :source-paths ^:replace #=(some-> "DS_BACKOFFICE_BACKEND_DEV_SOURCE_PATHS"
                                                              System/getenv
                                                              read-string
                                                              eval)
                            :dependencies [[org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]]
-                           :plugins [[refactor-nrepl "2.4.0-SNAPSHOT"]
+                           :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
                                      [cider/cider-nrepl "0.16.0"]]}
  :emacs-docsolver-frontend {:dependencies [[lein-doo "0.1.10" :exclusions [org.clojure/clojure]]]
                             :source-paths ["test" "../common/test"]
