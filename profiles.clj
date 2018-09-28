@@ -1,6 +1,10 @@
 {:user {:plugins [[lein-bikeshed "0.5.1" :exclusions [org.clojure/clojure]]
                   [lein-cljfmt "0.6.0" :exclusions [org.clojure/clojure org.clojure/tools.cli]]
                   [lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
+                  [com.jakemccrary/lein-test-refresh "0.23.0" :exclusions [org.clojure/clojure
+                                                                           org.clojure/tools.namespace]]
+                  [nrepl/lein-nrepl "0.1.2" :exclusions [org.clojure/clojure]]
+                  [lein-lein "0.2.0"]
                   [com.gfredericks/how-to-ns "0.1.9" :exclusions [org.clojure/clojure]]
                   [com.gfredericks/lein-all-my-files-should-end-with-exactly-one-newline-character
                    "0.1.1"
