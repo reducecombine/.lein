@@ -24,7 +24,11 @@
                                                         :password #=(some-> "CLOJARS_PASSWORD"
                                                                             System/getenv
                                                                             eval)}}}
- :emacs-docsolver-backend {:repl-options {:init (user/reset)
+ :emacs-docsolver-backend {:repl-options {:init (do
+                                                  (require 'cider.nrepl.middleware.stacktrace)
+                                                  ;; https://github.com/clojure-emacs/cider-nrepl/issues/547
+                                                  (alter-var-root #'cider.nrepl.middleware.stacktrace/ns-common-prefix (constantly {:valid true :common "app."}))
+                                                  (user/reset))
                                           :port 45432
                                           :timeout 180000}
                            :source-paths ^:replace #=(some-> "DS_BACKOFFICE_BACKEND_DEV_SOURCE_PATHS"
