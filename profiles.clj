@@ -23,6 +23,11 @@
                                                         :password #=(some-> "CLOJARS_PASSWORD"
                                                                             System/getenv
                                                                             eval)}}}
+ :emacs-backend {:dependencies [[org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]
+                                [org.clojure/tools.namespace "0.2.11"]
+                                [com.stuartsierra/component.repl "0.2.0"]]
+                 :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
+                           [cider/cider-nrepl "0.16.0"]]}
  :emacs-figwheel {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                  [figwheel-sidecar "0.5.16"]]
                   :plugins [[cider/cider-nrepl "0.16.0"]]
