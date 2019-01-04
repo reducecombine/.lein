@@ -1,5 +1,5 @@
 {:user {:plugins [[lein-bikeshed "0.5.1" :exclusions [org.clojure/clojure]]
-                  [lein-cljfmt "0.6.0" :exclusions [org.clojure/clojure org.clojure/tools.cli]]
+                  [lein-cljfmt "0.6.3" :exclusions [org.clojure/clojure org.clojure/tools.cli]]
                   [lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
                   [com.jakemccrary/lein-test-refresh "0.23.0" :exclusions [org.clojure/clojure
                                                                            org.clojure/tools.namespace]]
