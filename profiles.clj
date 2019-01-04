@@ -10,7 +10,8 @@
                    "0.1.1"
                    :exclusions
                    [org.clojure/clojure]]]
-        :jvm-opts ["-Dapple.awt.UIElement=true"]
+        :jvm-opts ["-Dapple.awt.UIElement=true"
+                   "-XX:-OmitStackTraceInFastThrow"]
         :how-to-ns {:require-docstring?      false
                     :sort-clauses?           true
                     :allow-refer-all?        false
