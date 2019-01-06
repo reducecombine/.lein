@@ -23,9 +23,7 @@
  :auth {:deploy-repositories [["releases" {:url "https://clojars.org/repo" :sign-releases false}]
                               ["snapshots" :clojars]]
         :repository-auth {#"https://clojars\.org/repo" {:username "vemv"
-                                                        :password #=(some-> "CLOJARS_PASSWORD"
-                                                                            System/getenv
-                                                                            eval)}}}
+                                                        :password #=(eval (System/getenv "CLOJARS_PASSWORD"))}}}
  ;; the following profile is only necessary when staring `lein repl` from iTerm:
  :emacs-backend {:dependencies [[org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]
                                 [org.clojure/tools.namespace "0.2.11"]
