@@ -13,7 +13,8 @@
                    [org.clojure/clojure]]]
         :jvm-opts ["-Dapple.awt.UIElement=true"
                    "-XX:-OmitStackTraceInFastThrow"]
-        :eftest {:multithread? false}
+        :eftest {:multithread? false
+                 :fail-fast? true}
         :how-to-ns {:require-docstring?      false
                     :sort-clauses?           true
                     :allow-refer-all?        false
