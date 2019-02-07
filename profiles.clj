@@ -1,4 +1,5 @@
-{:user {:plugins [[lein-eftest "0.5.4"]
+{:user {:dependencies [[nrepl-debugger "0.1.0-SNAPSHOT"]]
+        :plugins [[lein-eftest "0.5.4"]
                   [lein-bikeshed "0.5.1" :exclusions [org.clojure/clojure]]
                   [lein-cljfmt "0.6.3" :exclusions [org.clojure/clojure org.clojure/tools.cli]]
                   [lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
@@ -38,6 +39,7 @@
                                       :timeout 120000
                                       :init-ns user
                                       :init (do
+                                              (clojure.core/require 'net.vemv.nrepl-debugger)
                                               (clojure.core/require 'clojure.tools.namespace.repl)
                                               (clojure.core/require 'com.stuartsierra.component.repl)
                                               (clojure.tools.namespace.repl/set-refresh-dirs "dev/server" "src/server" "specs/server")
