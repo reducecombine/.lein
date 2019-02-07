@@ -1,4 +1,5 @@
-{:user {:dependencies [[nrepl-debugger "0.1.0-SNAPSHOT"]]
+{:user {#_ #_ :repositories [["vemv" #=(eval (System/getenv "MYMAVENREPO_READ_URL"))]]
+        :dependencies [[nrepl-debugger "0.1.0-SNAPSHOT"]]
         :plugins [[lein-eftest "0.5.4"]
                   [lein-bikeshed "0.5.1" :exclusions [org.clojure/clojure]]
                   [lein-cljfmt "0.6.3" :exclusions [org.clojure/clojure org.clojure/tools.cli]]
