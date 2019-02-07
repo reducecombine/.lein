@@ -28,13 +28,12 @@
                                                         :password #=(eval (System/getenv "CLOJARS_PASSWORD"))}}}
  ;; the following profile is only necessary when staring `lein repl` from iTerm:
  :emacs-backend {:dependencies [[org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]
-                                [org.clojure/tools.namespace "0.2.11"]
+                                [org.clojure/tools.namespace "0.3.0-alpha4"]
                                 [com.stuartsierra/component.repl "0.2.0"]]
                  :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
                            [cider/cider-nrepl "0.16.0"]]}
  :nedap-key {:source-paths ["specs/server"]
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
-             :dependencies [[org.clojure/tools.namespace "0.3.0-alpha4"]]
              :repl-options ^:replace {:port 41235
                                       :timeout 120000
                                       :init-ns user
