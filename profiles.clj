@@ -21,20 +21,22 @@
  ;; * Launching `lein repl` from iTerm
  ;; * Launching an in-Emacs JVM
  ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
- :emacs-backend {:dependencies [[formatting-stack "0.5.0"]
+ :emacs-backend {:dependencies [[formatting-stack "0.6.1"]
                                 [org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]
                                 [org.clojure/tools.namespace "0.3.0-alpha4"]
                                 [nrepl-debugger "0.1.0-SNAPSHOT"]
                                 [com.stuartsierra/component.repl "0.2.0"]]
                  :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
                            [cider/cider-nrepl "0.16.0"]]
-                 :repl-options {:init (do
-                                        (clojure.core/require 'net.vemv.nrepl-debugger)
-                                        (clojure.core/require 'formatting-stack.core)
-                                        (clojure.core/require 'clojure.tools.namespace.repl)
-                                        (clojure.core/require 'com.stuartsierra.component.repl)
-                                        (clojure.tools.namespace.repl/set-refresh-dirs "src" "test")
-                                        (clojure.tools.namespace.repl/refresh))}}
+                 :repl-options {:port 41235
+                                :timeout 120000}}
+ :emacs-backend-init {:repl-options {:init (do
+                                             (clojure.core/require 'net.vemv.nrepl-debugger)
+                                             (clojure.core/require 'formatting-stack.core)
+                                             (clojure.core/require 'clojure.tools.namespace.repl)
+                                             (clojure.core/require 'com.stuartsierra.component.repl)
+                                             (clojure.tools.namespace.repl/set-refresh-dirs "src" "test")
+                                             (clojure.tools.namespace.repl/refresh))}}
  :nedap-key {:source-paths ["specs/server"]
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
              :repl-options ^:replace {:port 41235
