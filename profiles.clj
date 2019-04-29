@@ -6,13 +6,7 @@
                    "-XX:-OmitStackTraceInFastThrow"
                    "-Xmx18G"]
         :eftest {:multithread? false
-                 :fail-fast? true}
-        :how-to-ns {:require-docstring?      false
-                    :sort-clauses?           true
-                    :allow-refer-all?        false
-                    :allow-extra-clauses?    false
-                    :align-clauses?          false
-                    :import-square-brackets? true}}
+                 :fail-fast? true}}
  :auth {:deploy-repositories [["releases" {:url "https://clojars.org/repo" :sign-releases false}]
                               ["snapshots" :clojars]]
         :repository-auth {#"https://clojars\.org/repo" {:username "vemv"
