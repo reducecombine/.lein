@@ -10,7 +10,7 @@
                  :fail-fast? true}}
  :auth {:deploy-repositories [["releases" {:url "https://clojars.org/repo" :sign-releases false}]
                               ["snapshots" :clojars]]
-        :repository-auth {#"https://clojars\.org/repo" {:username "vemv"
+        :repository-auth {#"https://clojars\.org/repo" {:username #=(eval (System/getenv "CLOJARS_USERNAME"))
                                                         :password #=(eval (System/getenv "CLOJARS_PASSWORD"))}}}
  ;; the following profile serves for two use cases:
  ;; * Launching `lein repl` from iTerm
