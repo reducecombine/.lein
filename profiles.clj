@@ -71,6 +71,17 @@
                                                                                              "pepkey-migrations"
                                                                                              "modules")
                                               (com.stuartsierra.component.repl/reset))}}
+ :refactor-nrepl {:dependencies [[http-kit "2.3.0"]
+                                 [cheshire "5.8.0"]
+                                 [org.clojure/tools.analyzer.jvm "0.7.1"]
+                                 [org.clojure/tools.namespace "0.3.0-alpha3" :exclusions [org.clojure/tools.reader]]
+                                 [org.clojure/tools.reader "1.1.1"]
+                                 [cider/orchard "0.3.0"]
+                                 [cljfmt "0.6.3"]
+                                 [me.raynes/fs "1.4.6"]
+                                 [rewrite-clj "0.6.0"]
+                                 [cljs-tooling "0.2.0"]
+                                 [version-clj "0.1.2"]]}
  :emacs-figwheel {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                  [figwheel-sidecar "0.5.16"]]
                   :plugins [[cider/cider-nrepl "0.16.0"]]
