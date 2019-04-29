@@ -47,7 +47,7 @@
                                              (clojure.tools.namespace.repl/refresh))}}
  :nedap-key {:source-paths ["specs/server"]
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
-             :repl-options ^:replace {:port 41235
+             :repl-options ^:replace {:port 41234
                                       :timeout 120000
                                       :init-ns user
                                       :init (do
