@@ -63,7 +63,13 @@
                                               (clojure.core/require 'formatting-stack.project-formatter)
                                               (clojure.core/require 'clojure.tools.namespace.repl)
                                               (clojure.core/require 'com.stuartsierra.component.repl)
-                                              (clojure.tools.namespace.repl/set-refresh-dirs "dev/server" "src/server" "specs/server")
+                                              (clojure.core/require 'clojure.test)
+                                              (clojure.core/alter-var-root #'clojure.test/*load-tests* (clojure.core/constantly false))
+                                              (clojure.tools.namespace.repl/set-refresh-dirs "dev/server"
+                                                                                             "src/server"
+                                                                                             "specs/server"
+                                                                                             "pepkey-migrations"
+                                                                                             "modules")
                                               (com.stuartsierra.component.repl/reset))}}
  :emacs-figwheel {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                  [figwheel-sidecar "0.5.16"]]
