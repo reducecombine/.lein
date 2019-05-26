@@ -29,7 +29,7 @@
                  :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
                            [cider/cider-nrepl "0.16.0"]]
                  :repl-options {:port 41235
-                                :timeout 120000}}
+                                :timeout 600000}}
  :emacs-backend-init {:repl-options {:init (do
                                              (clojure.core/require 'refactor-nrepl.core)
                                              (clojure.core/require 'refactor-nrepl.middleware)
@@ -44,7 +44,8 @@
                                              (clojure.core/require 'clojure.tools.namespace.repl)
                                              (clojure.core/require 'com.stuartsierra.component.repl)
                                              (clojure.tools.namespace.repl/set-refresh-dirs "src" "test")
-                                             (clojure.tools.namespace.repl/refresh))}}
+                                             (clojure.tools.namespace.repl/refresh)
+                                             (refactor-nrepl.analyzer/warm-ast-cache))}}
  :nedap-key {:source-paths ["specs/server"]
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
              :repl-options ^:replace {:port 41234
