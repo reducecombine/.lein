@@ -48,7 +48,7 @@
  :nedap-key {:source-paths ["specs/server"]
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
              :repl-options ^:replace {:port 41234
-                                      :timeout 120000
+                                      :timeout 600000
                                       :init-ns user
                                       :init (do
                                               (clojure.core/require 'refactor-nrepl.core)
@@ -70,7 +70,19 @@
                                                                                              "specs/server"
                                                                                              "pepkey-migrations"
                                                                                              "modules")
-                                              (com.stuartsierra.component.repl/reset))}}
+                                              (clojure.core/when-let [v (try
+                                                                          (com.stuartsierra.component.repl/reset)
+                                                                          (refactor-nrepl.analyzer/warm-ast-cache)
+                                                                          (catch java.lang.Throwable v
+                                                                            (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
+                                                                              (clojure.tools.namespace.repl/clear))
+                                                                            (clojure.core/when (com.stuartsierra.component/ex-component? v)
+                                                                              (clojure.core/some-> v clojure.core/ex-data :system com.stuartsierra.component/stop))
+                                                                            v))]
+                                                (clojure.core/when (clojure.core/instance? java.lang.Throwable v)
+                                                  (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
+                                                    (clojure.tools.namespace.repl/clear))
+                                                  (clojure.core/-> v .printStackTrace))))}}
  :refactor-nrepl {:dependencies [[http-kit "2.3.0"]
                                  [cheshire "5.8.0"]
                                  [org.clojure/tools.analyzer.jvm "0.7.1"]
