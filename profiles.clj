@@ -31,6 +31,7 @@
                            [cider/cider-nrepl "0.16.0"]]
                  :repl-options {:port 41235
                                 :timeout 600000}}
+ :terminal {:repl-options {:port 41233}}
  :emacs-backend-init {:repl-options {:init (do
                                              (clojure.core/require 'refactor-nrepl.core)
                                              (clojure.core/require 'refactor-nrepl.middleware)
