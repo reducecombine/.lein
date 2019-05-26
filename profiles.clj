@@ -18,7 +18,8 @@
  ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
  :emacs-backend {:dependencies [[cider/cider-nrepl "0.16.0"]
                                 [criterium "0.4.4"]
-                                [formatting-stack "0.17.0"]
+                                [formatting-stack "0.17.0" :exclusions [com.nedap.staffing-solutions/utils.spec
+                                                                        #_"Allows development of utils.spec itself"]]
                                 [lambdaisland/deep-diff "0.0-29"]
                                 [org.clojure/tools.reader "1.1.1"]
                                 [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
