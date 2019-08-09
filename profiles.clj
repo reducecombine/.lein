@@ -1,5 +1,4 @@
-{:user {#_ #_ :repositories [["vemv" #=(eval (System/getenv "MYMAVENREPO_READ_URL"))]]
-        :plugins [[lein-eftest "0.5.4"]
+{:user {:plugins [[lein-eftest "0.5.4"]
                   [lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
                   [lein-nvd "0.6.0"]
                   [lein-lein "0.2.0"]]
