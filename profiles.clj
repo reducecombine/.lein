@@ -8,7 +8,8 @@
                    "-XX:-OmitStackTraceInFastThrow"
                    "-Xmx18G"]
         :eftest {:multithread? false
-                 :fail-fast? true}}
+                 :fail-fast? true}
+        :monkeypatch-clojure-test false}
  :auth {:deploy-repositories [["releases" {:url "https://clojars.org/repo" :sign-releases false}]
                               ["snapshots" :clojars]]
         :repository-auth {#"https://clojars\.org/repo" {:username #=(eval (System/getenv "CLOJARS_USERNAME"))
