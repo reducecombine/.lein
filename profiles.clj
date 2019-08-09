@@ -31,62 +31,64 @@
                  :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
                            [cider/cider-nrepl "0.16.0"]]
                  :repl-options {:port 41235
-                                :timeout 600000}}
+                                :timeout 600000
+                                :init {:emacs-backend
+                                       (do
+                                         (clojure.core/require 'refactor-nrepl.core)
+                                         (clojure.core/require 'refactor-nrepl.middleware)
+                                         (clojure.core/require 'refactor-nrepl.analyzer)
+                                         (clojure.core/require 'net.vemv.nrepl-debugger)
+                                         (clojure.core/require 'clj-java-decompiler.core)
+                                         (clojure.core/require 'lambdaisland.deep-diff)
+                                         (clojure.core/require 'criterium.core)
+                                         (clojure.core/require 'formatting-stack.core)
+                                         (clojure.core/require 'formatting-stack.branch-formatter)
+                                         (clojure.core/require 'formatting-stack.project-formatter)
+                                         (clojure.core/require 'clojure.test)
+                                         (clojure.core/require 'clojure.tools.namespace.repl)
+                                         (clojure.core/require 'com.stuartsierra.component.repl))}}}
  :terminal {:repl-options {:port 41233}}
- :emacs-backend-init {:repl-options {:init (do
-                                             (clojure.core/require 'refactor-nrepl.core)
-                                             (clojure.core/require 'refactor-nrepl.middleware)
-                                             (clojure.core/require 'refactor-nrepl.analyzer)
-                                             (clojure.core/require 'net.vemv.nrepl-debugger)
-                                             (clojure.core/require 'clj-java-decompiler.core)
-                                             (clojure.core/require 'lambdaisland.deep-diff)
-                                             (clojure.core/require 'criterium.core)
-                                             (clojure.core/require 'formatting-stack.core)
-                                             (clojure.core/require 'formatting-stack.branch-formatter)
-                                             (clojure.core/require 'formatting-stack.project-formatter)
-                                             (clojure.core/require 'clojure.tools.namespace.repl)
-                                             (clojure.core/require 'com.stuartsierra.component.repl)
-                                             (clojure.tools.namespace.repl/set-refresh-dirs "src" "test")
-                                             (clojure.tools.namespace.repl/refresh)
-                                             (refactor-nrepl.analyzer/warm-ast-cache))}}
+ :emacs-backend-init {:repl-options {:init {:emacs-backend-init
+                                            (do
+                                              (eval '(clojure.tools.namespace.repl/set-refresh-dirs "src" "test"))
+                                              (eval '(clojure.tools.namespace.repl/refresh))
+                                              (clojure.core/future
+                                                (eval '(refactor-nrepl.analyzer/warm-ast-cache))))}}}
+ :nedap-link {:source-paths ["src/test"]
+              :repl-options ^:replace {:port 41236
+                                       :timeout 600000
+                                       :init-ns dev
+                                       :init {:nedap-link
+                                              (do
+                                                (eval '(clojure.tools.namespace.repl/set-refresh-dirs "src/dev" "src/main" "src/test"))
+                                                (eval '(clojure.tools.namespace.repl/refresh)))}}}
  :nedap-key {:source-paths ["specs/server"]
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
              :repl-options ^:replace {:port 41234
                                       :timeout 600000
                                       :init-ns user
-                                      :init (do
-                                              (clojure.core/require 'refactor-nrepl.core)
-                                              (clojure.core/require 'refactor-nrepl.middleware)
-                                              (clojure.core/require 'refactor-nrepl.analyzer)
-                                              (clojure.core/require 'net.vemv.nrepl-debugger)
-                                              (clojure.core/require 'clj-java-decompiler.core)
-                                              (clojure.core/require 'lambdaisland.deep-diff)
-                                              (clojure.core/require 'criterium.core)
-                                              (clojure.core/require 'formatting-stack.core)
-                                              (clojure.core/require 'formatting-stack.branch-formatter)
-                                              (clojure.core/require 'formatting-stack.project-formatter)
-                                              (clojure.core/require 'clojure.tools.namespace.repl)
-                                              (clojure.core/require 'com.stuartsierra.component.repl)
-                                              (clojure.core/require 'clojure.test)
-                                              (clojure.core/alter-var-root #'clojure.test/*load-tests* (clojure.core/constantly false))
-                                              (clojure.tools.namespace.repl/set-refresh-dirs "dev/server"
-                                                                                             "src/server"
-                                                                                             "specs/server"
-                                                                                             "pepkey-migrations"
-                                                                                             "modules")
-                                              (clojure.core/when-let [v (try
-                                                                          (com.stuartsierra.component.repl/reset)
-                                                                          (refactor-nrepl.analyzer/warm-ast-cache)
-                                                                          (catch java.lang.Throwable v
-                                                                            (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
-                                                                              (clojure.tools.namespace.repl/clear))
-                                                                            (clojure.core/when (com.stuartsierra.component/ex-component? v)
-                                                                              (clojure.core/some-> v clojure.core/ex-data :system com.stuartsierra.component/stop))
-                                                                            v))]
-                                                (clojure.core/when (clojure.core/instance? java.lang.Throwable v)
-                                                  (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
-                                                    (clojure.tools.namespace.repl/clear))
-                                                  (clojure.core/-> v .printStackTrace))))}}
+                                      :init {:nedap-key
+                                             (do
+                                               (clojure.core/alter-var-root #'clojure.test/*load-tests* (clojure.core/constantly false))
+                                               (eval '(clojure.tools.namespace.repl/set-refresh-dirs "dev/server"
+                                                                                                     "src/server"
+                                                                                                     "specs/server"
+                                                                                                     "pepkey-migrations"
+                                                                                                     "modules"))
+                                               (clojure.core/when-let [v (try
+                                                                           (eval '(com.stuartsierra.component.repl/reset))
+                                                                           (clojure.core/future
+                                                                             (eval '(refactor-nrepl.analyzer/warm-ast-cache)))
+                                                                           (catch java.lang.Throwable v
+                                                                             (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
+                                                                               (eval '(clojure.tools.namespace.repl/clear)))
+                                                                             (clojure.core/when (com.stuartsierra.component/ex-component? v)
+                                                                               (clojure.core/some-> v clojure.core/ex-data :system com.stuartsierra.component/stop))
+                                                                             v))]
+                                                 (clojure.core/when (clojure.core/instance? java.lang.Throwable v)
+                                                   (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
+                                                     (eval '(clojure.tools.namespace.repl/clear)))
+                                                   (clojure.core/-> v .printStackTrace))))}}}
  :refactor-nrepl {:dependencies [[http-kit "2.3.0"]
                                  [cheshire "5.8.0"]
                                  [org.clojure/tools.analyzer.jvm "0.7.1"]
