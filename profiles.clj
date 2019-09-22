@@ -4,7 +4,10 @@
         :jvm-opts ["-Dapple.awt.UIElement=true"
                    "-Dclojure.main.report=stderr"
                    "-XX:-OmitStackTraceInFastThrow"
-                   "-Xmx18G"]
+                   "-Xmx18G"
+                   "-XX:+UseConcMarkSweepGC" #_"Necessary for CMSClassUnloadingEnabled"
+                   "-XX:+CMSClassUnloadingEnabled"
+                   "-Xverify:none" #_"Improves perf"]
         :eftest {:multithread? false
                  :fail-fast? true}
         :monkeypatch-clojure-test false}
