@@ -56,6 +56,7 @@
                                               (eval '(clojure.tools.namespace.repl/refresh))
                                               (clojure.core/future
                                                 (eval '(refactor-nrepl.analyzer/warm-ast-cache))))}}}
+ :nedap-gw {:repl-options {:port 41237}}
  :nedap-link {:source-paths ["src/test"]
               :repl-options ^:replace {:port 41236
                                        :timeout 600000
