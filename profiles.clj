@@ -68,7 +68,7 @@
              :jvm-opts ["-Dlogback.configurationFile=resources/logback-no-stdout.xml"]
              :repl-options ^:replace {:port 41234
                                       :timeout 600000
-                                      :init-ns user
+                                      :init-ns dev
                                       :init {:nedap-key
                                              (do
                                                (clojure.core/alter-var-root #'clojure.test/*load-tests* (clojure.core/constantly false))
