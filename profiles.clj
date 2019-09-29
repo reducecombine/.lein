@@ -1,5 +1,4 @@
-{:user {:plugins [[lein-eftest "0.5.4"]
-                  [lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
+{:user {:plugins [[lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
                   [lein-lein "0.2.0"]]
         :jvm-opts ["-Dapple.awt.UIElement=true"
                    "-Dclojure.main.report=stderr"
@@ -8,9 +7,8 @@
                    "-XX:+UseConcMarkSweepGC" #_"Necessary for CMSClassUnloadingEnabled"
                    "-XX:+CMSClassUnloadingEnabled"
                    "-Xverify:none" #_"Improves perf"]
-        :eftest {:multithread? false
-                 :fail-fast? true}
         :monkeypatch-clojure-test false}
+
  ;; the following profile serves for two use cases:
  ;; * Launching `lein repl` from iTerm
  ;; * Launching an in-Emacs JVM
@@ -99,10 +97,15 @@
                                  [rewrite-clj "0.6.0"]
                                  [cljs-tooling "0.2.0"]
                                  [version-clj "0.1.2"]]}
+
  :emacs-figwheel {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                  [figwheel-sidecar "0.5.16"]]
                   :plugins [[cider/cider-nrepl "0.16.0"]]
                   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                   :figwheel {:nrepl-middleware ["cider.nrepl/cider-middleware"
                                                 "refactor-nrepl.middleware/wrap-refactor"
-                                                "cemerick.piggieback/wrap-cljs-repl"]}}}
+                                                "cemerick.piggieback/wrap-cljs-repl"]}}
+
+ :eftest {:plugins [[lein-eftest "0.5.8"]]
+          :eftest {:multithread? false
+                   :fail-fast? true}}}
