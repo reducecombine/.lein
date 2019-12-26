@@ -27,6 +27,7 @@
                            [cider/cider-nrepl "0.16.0"]]
                  :repl-options {:port 41235
                                 :timeout 600000
+                                :welcome "Print nothing"
                                 :init {:emacs-backend
                                        (do
                                          (clojure.core/require 'refactor-nrepl.core)
