@@ -74,9 +74,12 @@
                                      (clojure.core/alter-var-root #'clojure.test/*load-tests* (clojure.core/constantly false))
                                      (eval '(clojure.tools.namespace.repl/set-refresh-dirs "dev/server"
                                                                                            "src/server"
+                                                                                           "src/shared"
                                                                                            "specs/server"
                                                                                            "pepkey-migrations"
-                                                                                           "modules"))
+                                                                                           "modules"
+                                                                                           "libs"
+                                                                                           "tasks"))
                                      (clojure.core/when-let [v (try
                                                                  (eval '(com.stuartsierra.component.repl/reset))
                                                                  (clojure.core/future
