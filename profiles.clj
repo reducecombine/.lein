@@ -50,10 +50,17 @@
 
  :emacs-backend-init {:repl-options {:init {:emacs-backend-init
                                             (do
-                                              (eval '(clojure.tools.namespace.repl/set-refresh-dirs "src" "test"))
-                                              (eval '(clojure.tools.namespace.repl/refresh))
-                                              (clojure.core/future
-                                                (eval '(refactor-nrepl.analyzer/warm-ast-cache))))}}}
+                                              (clojure.core/eval '(clojure.core/create-ns 'vemv-warm))
+                                              (clojure.core/eval '(clojure.tools.namespace.repl/set-refresh-dirs "dev" "src" "test" "modules"))
+                                              (clojure.core/eval '(clojure.core/intern 'vemv-warm
+                                                                                       'vemv-warm
+                                                                                       (clojure.core/delay
+                                                                                        (clojure.core/eval '(refactor-nrepl.analyzer/warm-ast-cache)))))
+                                              (clojure.core/eval '(clojure.core/intern 'vemv-warm
+                                                                                       'vemv-do-warm
+                                                                                       (fn []
+                                                                                         @vemv-warm/vemv-warm)))
+                                              (clojure.core/eval '(clojure.tools.namespace.repl/refresh :after 'vemv-warm/vemv-do-warm)))}}}
 
  :nedap-gw {:repl-options {:port 41237}}
 
