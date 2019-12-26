@@ -1,6 +1,7 @@
 {:user {:plugins [[lein-pprint "1.1.2" :exclusions [org.clojure/clojure]]
                   [lein-lein "0.2.0"]]
         :jvm-opts ["-Dapple.awt.UIElement=true"
+                   "-server"
                    "-Dclojure.main.report=stderr"
                    "-XX:-OmitStackTraceInFastThrow"
                    "-Xmx18G"
