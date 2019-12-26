@@ -14,14 +14,13 @@
  ;; * Launching an in-Emacs JVM
  ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
  :emacs-backend {:dependencies [[cider/cider-nrepl "0.16.0"]
-                                [criterium "0.4.4"]
-                                [formatting-stack "0.17.0" :exclusions [com.nedap.staffing-solutions/utils.spec
-                                                                        #_"Allows development of utils.spec itself"]]
+                                [criterium "0.4.5"]
+                                [formatting-stack "1.0.1"]
                                 [lambdaisland/deep-diff "0.0-29"]
                                 [org.clojure/tools.reader "1.1.1"]
                                 [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
                                 [org.clojure/tools.nrepl "0.2.13" :exclusions [org.clojure/clojure]]
-                                [org.clojure/tools.namespace "0.3.0-alpha4"]
+                                [org.clojure/tools.namespace "0.3.1"]
                                 [nrepl-debugger "0.1.0-SNAPSHOT"]
                                 [com.stuartsierra/component.repl "0.2.0"]]
                  :plugins [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
