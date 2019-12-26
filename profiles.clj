@@ -3,6 +3,7 @@
         :jvm-opts ["-Dapple.awt.UIElement=true"
                    "-server"
                    "-Dclojure.main.report=stderr"
+                   "-Dclojure.core.async.go-checking=true"
                    "-XX:-OmitStackTraceInFastThrow"
                    "-Xmx18G"
                    "-Xverify:none" #_"Improves perf"]
