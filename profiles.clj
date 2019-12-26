@@ -5,8 +5,6 @@
                    "-Dclojure.main.report=stderr"
                    "-XX:-OmitStackTraceInFastThrow"
                    "-Xmx18G"
-                   "-XX:+UseConcMarkSweepGC" #_"Necessary for CMSClassUnloadingEnabled"
-                   "-XX:+CMSClassUnloadingEnabled"
                    "-Xverify:none" #_"Improves perf"]
         :monkeypatch-clojure-test false}
 
