@@ -58,7 +58,20 @@
                                                    (clojure.core/require 'formatting-stack.project-formatter)
                                                    (clojure.core/require 'clojure.test)
                                                    (clojure.core/require 'clojure.tools.namespace.repl)
-                                                   (clojure.core/require 'com.stuartsierra.component.repl))}}}
+                                                   (clojure.core/require 'com.stuartsierra.component.repl)
+                                                   (clojure.core/eval '(clojure.core/create-ns 'vemv-warm))
+                                                   (clojure.core/eval '(clojure.core/intern 'vemv-warm
+                                                                                            ;; a linting function apt for a broader selection of projects.
+                                                                                            'lint!
+                                                                                            (fn []
+                                                                                              (formatting-stack.core/format!
+                                                                                               :formatters []
+                                                                                               :in-background? false
+                                                                                               :linters [(-> (formatting-stack.linters.eastwood/new {})
+                                                                                                             (assoc :strategies (conj formatting-stack.defaults/extended-strategies
+                                                                                                                                      formatting-stack.strategies/exclude-cljs
+                                                                                                                                      formatting-stack.strategies/jvm-requirable-files
+                                                                                                                                      formatting-stack.strategies/namespaces-within-refresh-dirs-only)))])))))}}}
 
  :terminal           {:repl-options {:port 41233}}
 
