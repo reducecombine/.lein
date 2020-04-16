@@ -22,7 +22,7 @@
  ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
  :emacs-backend      {:dependencies   [[cider/cider-nrepl "0.16.0"]
                                        [criterium "0.4.5"]
-                                       [formatting-stack "4.2.0"]
+                                       [formatting-stack "4.2.1"]
                                        [medley "1.2.0"]
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [org.clojure/clojure "1.10.1"]
@@ -142,7 +142,11 @@
                                                                    (fn []
                                                                      (if (eval '(clojure.core/= vemv-warm/init-fn
                                                                                                 com.stuartsierra.component.repl/initializer))
-                                                                       @vemv-warm/vemv-warm
+                                                                       ;; ... this means `(set-init)` has not been invoked, which means that this project does not use Sierra's `reset`:
+                                                                       (do
+                                                                         @vemv-warm/vemv-warm
+                                                                         ;; invoke home-grown `reset` functions, e.g. https://git.io/Jff6j :
+                                                                         (some-> 'user/reset resolve .invoke))
                                                                        (clojure.core/when-let [v (try
                                                                                                    (eval '(com.stuartsierra.component.repl/reset))
                                                                                                    (future ;; wrap in a future - it is assumed projects with a System can be large:
