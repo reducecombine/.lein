@@ -63,12 +63,14 @@
                                                    (clojure.core/eval '(clojure.core/intern 'vemv-warm
                                                                                             ;; a linting function apt for a broader selection of projects.
                                                                                             'lint!
-                                                                                            (fn []
+                                                                                            (fn [& [full?]]
                                                                                               (formatting-stack.core/format!
                                                                                                :formatters []
                                                                                                :in-background? false
                                                                                                :linters [(-> (formatting-stack.linters.eastwood/new {})
-                                                                                                             (assoc :strategies (conj formatting-stack.defaults/extended-strategies
+                                                                                                             (assoc :strategies (conj (if full?
+                                                                                                                                        formatting-stack.project-formatter/default-strategies
+                                                                                                                                        formatting-stack.defaults/extended-strategies)
                                                                                                                                       formatting-stack.strategies/exclude-cljs
                                                                                                                                       formatting-stack.strategies/jvm-requirable-files
                                                                                                                                       formatting-stack.strategies/namespaces-within-refresh-dirs-only)))])))))}}}
