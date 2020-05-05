@@ -22,7 +22,7 @@
  ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
  :emacs-backend      {:dependencies   [[cider/cider-nrepl "0.16.0"]
                                        [criterium "0.4.5"]
-                                       [formatting-stack "4.2.1"]
+                                       [formatting-stack "4.2.2"]
                                        [medley "1.2.0"]
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [org.clojure/clojure "1.10.1"]
