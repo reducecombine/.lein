@@ -1,30 +1,30 @@
-{ :user              {:plugins                           [[lein-pprint "1.1.2"]
-                                                          [lein-subscribable-urls "0.1.0-alpha2"]
-                                                          [lein-lein "0.2.0"]
-                                                          [threatgrid/resolve-java-sources-and-javadocs "0.1.4"]]
-                      :dependencies                      [[lein-subscribable-urls "0.1.0-alpha2"]]
-                      :jvm-opts                          ["-Dapple.awt.UIElement=true"
-                                                          "-Dclojure.compiler.disable-locals-clearing=true"
-                                                          #_ "-Dclojure.core.async.go-checking=true"
-                                                          "-Dclojure.main.report=stderr"
-                                                          "-Dformatting-stack.eastwood.parallelize-linters=true"
-                                                          "-Diroh.dev.logging.level=:error"
-                                                          "-Diroh.dev.logging.enable-println-appender=false"
-                                                          ;; "-Diroh.enable-response-profiling=true"
-                                                          "-Diroh.dev.logging.enable-file-appender=true"
-                                                          "-Diroh.dev.logging.order-chronologically=false"
-                                                          "-server"
-                                                          "-XX:-OmitStackTraceInFastThrow"
-                                                          "-XX:MaxJavaStackTraceDepth=1000000"
-                                                          "-XX:+TieredCompilation"
-                                                          "-XX:TieredStopAtLevel=1"
-                                                          ;; Prevents a specific type of OOMs:
-                                                          "-XX:CompressedClassSpaceSize=3G"
-                                                          "-Xmx18G"
-                                                          "-Xss6144k" ;; increase stack size x6, for preventing SO errors. The current default can be found w `java -XX:+PrintFlagsFinal -version 2>/dev/null | grep "intx ThreadStackSize"`
-                                                          "-Xverify:none" #_"Improves perf"]
-                      :monkeypatch-clojure-test          false
-                      :resolve-java-sources-and-javadocs {:classifiers #{"sources"}}}
+{:user               {:plugins                  [[lein-pprint "1.1.2"]
+                                                 [lein-subscribable-urls "0.1.0-alpha2"]
+                                                 [lein-lein "0.2.0"]
+                                                 [lein-jdk-tools "0.1.1"]]
+                      :dependencies             [[lein-subscribable-urls "0.1.0-alpha2"]]
+                      :jvm-opts                 ["-Dapple.awt.UIElement=true"
+                                                 "-Dclojure.compiler.disable-locals-clearing=true"
+                                                 "-Dclojure.core.async.go-checking=true"
+                                                 "-Dclojure.main.report=stderr"
+                                                 "-Dformatting-stack.eastwood.parallelize-linters=true"
+                                                 "-XX:+TieredCompilation"
+                                                 "-XX:-OmitStackTraceInFastThrow"
+                                                 "-XX:CompressedClassSpaceSize=3G" ;; Prevents a specific type of OOMs:
+                                                 "-XX:MaxJavaStackTraceDepth=1000000"
+                                                 "-XX:TieredStopAtLevel=1"
+                                                 "-Xmx18G"
+                                                 "-Xss6144k" ;; increase stack size x6, for preventing SO errors. The current default can be found w `java -XX:+PrintFlagsFinal -version 2>/dev/null | grep "intx ThreadStackSize"`
+                                                 "-Xverify:none" #_"Improves perf"
+                                                 "-server"]
+                      :monkeypatch-clojure-test false}
+
+ :async-checking     {:jvm-opts ["-Dclojure.core.async.go-checking=true"]}
+
+ :repl               {:middleware                        [leiningen.resolve-java-sources-and-javadocs/middleware]
+                      :plugins                           [[threatgrid/resolve-java-sources-and-javadocs "1.3.0"]]
+                      :resolve-java-sources-and-javadocs {:classifiers #{"sources"}}
+                      :jvm-opts                          ["-Dleiningen.resolve-java-sources-and-javadocs.throw=true"]}
 
  :clojars            {:deploy-repositories ^:replace [["clojars"
                                                        {:url           "https://clojars.org/repo/",
@@ -37,27 +37,24 @@
  ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
  :emacs-backend      {:dependencies   [[cider/cider-nrepl "0.16.0"]
                                        [clj-stacktrace "0.2.8"]
-                                       [criterium "0.4.5"]
-                                       [formatting-stack "4.2.3"]
-                                       [medley "1.2.0"]
-                                       [lambdaisland/deep-diff "0.0-29"]
-                                       [org.clojure/clojure "1.10.1"]
-                                       [org.clojure/tools.reader "1.1.1"]
-                                       [org.clojure/java.jmx "0.3.4"]
                                        [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
-                                       [org.clojure/spec.alpha "0.2.176"]
-                                       [org.clojure/tools.nrepl "0.2.13"]
-                                       [org.clojure/tools.namespace "0.3.1"]
-                                       [nrepl-debugger "0.1.0-SNAPSHOT"]
                                        [com.nedap.staffing-solutions/utils.collections "2.1.0"]
                                        [com.stuartsierra/component.repl "0.2.0"]
-                                       [com.taoensso/tufte "2.1.0"]
+                                       [criterium "0.4.5"]
+                                       [formatting-stack "4.3.0-alpha1"]
+                                       [lambdaisland/deep-diff "0.0-29"]
+                                       [medley "1.2.0"]
+                                       [nrepl-debugger "0.1.0-SNAPSHOT"]
+                                       [org.clojure/clojure "1.10.1"]
+                                       [org.clojure/java.jmx "0.3.4"]
+                                       [org.clojure/spec.alpha "0.2.176"]
+                                       [org.clojure/tools.namespace "0.3.1"]
+                                       [org.clojure/tools.nrepl "0.2.13"]
+                                       [org.clojure/tools.reader "1.1.1"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]]
 
                       :resource-paths [;; http://rebl.cognitect.com/download.html
                                        "/Users/vemv/.lein/resources/rebl.jar"]
-
-                      :middleware     [leiningen.resolve-java-sources-and-javadocs/add]
 
                       :plugins        [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
                                        [cider/cider-nrepl "0.16.0"]]
@@ -83,6 +80,10 @@
                                                    (clojure.core/require 'clojure.reflect)
                                                    (clojure.core/require 'clojure.tools.namespace.repl)
                                                    (clojure.core/require 'com.stuartsierra.component.repl)
+                                                   (require 'eastwood.linters.implicit-dependencies)
+                                                   (alter-var-root #'eastwood.linters.implicit-dependencies/var->ns-symbol
+                                                                   (constantly (fn [var]
+                                                                                 (-> var symbol namespace symbol))))
                                                    (clojure.core/eval '(clojure.core/create-ns 'vemv-warm))
                                                    (clojure.core/eval '(clojure.core/intern 'vemv-warm
                                                                                             ;; a linting function apt for a broader selection of projects.
@@ -91,20 +92,26 @@
                                                                                               (formatting-stack.core/format!
                                                                                                :formatters []
                                                                                                :in-background? false
-                                                                                               :linters [#_ (-> (formatting-stack.linters.eastwood/new {})
-                                                                                                                (assoc :strategies (conj (if full?
-                                                                                                                                           formatting-stack.project-formatter/default-strategies
-                                                                                                                                           formatting-stack.defaults/extended-strategies)
-                                                                                                                                         formatting-stack.strategies/exclude-cljs
-                                                                                                                                         formatting-stack.strategies/jvm-requirable-files
-                                                                                                                                         formatting-stack.strategies/namespaces-within-refresh-dirs-only)))])))))}}}
+                                                                                               :linters [(-> (formatting-stack.linters.eastwood/new {})
+                                                                                                             (assoc :strategies (conj (if full?
+                                                                                                                                        formatting-stack.project-formatter/default-strategies
+                                                                                                                                        formatting-stack.defaults/extended-strategies)
+                                                                                                                                      formatting-stack.strategies/exclude-cljs
+                                                                                                                                      formatting-stack.strategies/jvm-requirable-files
+                                                                                                                                      formatting-stack.strategies/namespaces-within-refresh-dirs-only)))])))))}}}
 
  :iroh-global        {:dependencies      [[net.vemv/rewrite-clj "0.6.2" #_"https://git.io/fhhbQ"]]
                       :source-paths      ["/Users/vemv/trapperkeeper-webserver-jetty9/test/clj"
                                           "/Users/vemv/formatting-stack.alias-rewriter/src"
                                           ;; `lein with-profile -user cljx once`:
                                           "/Users/vemv/schema/target/generated/src/clj"]
-                      :java-source-paths ["/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]}
+                      :java-source-paths ["/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]
+                      :jvm-opts          ["-Diroh.dev.refresh-fn=cisco.tools.namespace.parallel-refresh/refresh"
+                                          "-Diroh.dev.logging.level=:error"
+                                          "-Diroh.dev.logging.enable-println-appender=false"
+                                          ;; "-Diroh.enable-response-profiling=true"
+                                          "-Diroh.dev.logging.enable-file-appender=true"
+                                          "-Diroh.dev.logging.order-chronologically=false"]}
 
  :gcg1               {:jvm-opts ["-XX:+UseG1GC"
                                  "-XX:MaxGCPauseMillis=200"
@@ -114,6 +121,7 @@
 
  :terminal           {:repl-options {:port 41233}}
 
+ ;; remember to keep this in sync with exports.sh
  :yourkit            {:jvm-opts ["-agentpath:/Applications/YourKit-Java-Profiler-2019.8.app/Contents/Resources/bin/mac/libyjpagent.dylib"]}
 
  :emacs-backend-init {:repl-options {:init {:emacs-backend-init
