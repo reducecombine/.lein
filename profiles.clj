@@ -5,7 +5,6 @@
                       :dependencies             [[lein-subscribable-urls "0.1.0-alpha2"]]
                       :jvm-opts                 ["-Dapple.awt.UIElement=true"
                                                  "-Dclojure.compiler.disable-locals-clearing=true"
-                                                 "-Dclojure.core.async.go-checking=true"
                                                  "-Dclojure.main.report=stderr"
                                                  "-Dformatting-stack.eastwood.parallelize-linters=true"
                                                  "-XX:+TieredCompilation"
@@ -106,8 +105,7 @@
                                           ;; `lein with-profile -user cljx once`:
                                           "/Users/vemv/schema/target/generated/src/clj"]
                       :java-source-paths ["/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]
-                      :jvm-opts          ["-Diroh.dev.refresh-fn=cisco.tools.namespace.parallel-refresh/refresh"
-                                          "-Diroh.dev.logging.level=:error"
+                      :jvm-opts          ["-Diroh.dev.logging.level=:error"
                                           "-Diroh.dev.logging.enable-println-appender=false"
                                           ;; "-Diroh.enable-response-profiling=true"
                                           "-Diroh.dev.logging.enable-file-appender=true"
@@ -170,7 +168,10 @@
                                                                                             java.io.File.
                                                                                             .exists)
                                                                                 "src")
-                                                                              "test"
+                                                                              (when-not (-> "test/main/clojure"
+                                                                                            java.io.File.
+                                                                                            .exists)
+                                                                                "test")
                                                                               "main"
                                                                               "clojure"
                                                                               "src/main/clojure"
