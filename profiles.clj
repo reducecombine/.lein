@@ -177,19 +177,6 @@
                                                      (list 'clojure.tools.namespace.repl :only)
                                                      (apply clojure.core/refer))))}}}
 
- :nedap-gw           {:repl-options {:port 41237}}
-
- :nedap-link         {:source-paths ["src/test"]
-                      :repl-options {:port    41236
-                                     :timeout 600000
-                                     :init-ns dev}}
-
- :nedap-key          {:source-paths ["specs/server"]
-                      :jvm-opts     ["-Dlogback.configurationFile=logback-no-stdout.xml"]
-                      :repl-options {:port    41234
-                                     :timeout 600000
-                                     :init-ns dev}}
-
  :refactor-nrepl     {:dependencies [[http-kit "2.3.0"]
                                      [cheshire "5.8.0"]
                                      [org.clojure/tools.analyzer.jvm "0.7.1"]
