@@ -78,6 +78,7 @@
                                                    (clojure.core/require 'clojure.string)
                                                    (clojure.core/require 'clojure.reflect)
                                                    (clojure.core/require 'clojure.tools.namespace.repl)
+                                                   (clojure.core/require 'cisco.tools.namespace.parallel-refresh)
                                                    (clojure.core/require 'com.stuartsierra.component.repl)
                                                    (require 'eastwood.linters.implicit-dependencies)
                                                    (alter-var-root #'eastwood.linters.implicit-dependencies/var->ns-symbol
@@ -220,7 +221,7 @@
                                                                              (eval '(clojure.tools.namespace.repl/clear)))
                                                                            (clojure.core/-> v .printStackTrace)))))))
 
-                                              (clojure.core/let [v (clojure.core/eval '(clojure.tools.namespace.repl/refresh :after 'vemv-warm/vemv-do-warm))]
+                                              (clojure.core/let [v (clojure.core/eval '(cisco.tools.namespace.parallel-refresh/refresh :after 'vemv-warm/vemv-do-warm))]
                                                 (clojure.core/when (clojure.core/instance? java.lang.Exception v)
                                                   (clojure.core/println v)))
 
@@ -231,6 +232,22 @@
                                                      (vec)
                                                      (list 'clojure.tools.namespace.repl :only)
                                                      (apply clojure.core/refer))))}}}
+
+ :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.1.1"]
+                                     [cider/cider-nrepl "0.99.9" :exclusions [cljfmt]] ;; XXX release. try it via lein
+                                     [commons-io/commons-io "2.8.0"] ;; for the Tailer class
+                                     ;; XXX c.t.nrepl
+                                     [org.clojure/clojure "1.10.99"]]
+
+                      :jvm-opts     ["-Djava.awt.headless=false" ;; ensure the clipboard is usable
+                                     "-Dcisco.tools.namespace.parallel-refresh.debug=true"
+                                     ;; experiment - try triggering GC more frequently:
+                                     ;; "-XX:MaxMetaspaceExpansion=0"
+                                     ]
+                      :source-paths ["/Users/vemv/.lein/scripts"]
+                      :aliases      {"nrepl" ["run" "-m" "vemv.nrepl"]}
+                      :repositories [["https://packagecloud.io/vemv/clojure/maven2"
+                                      {:url "https://packagecloud.io/vemv/clojure/maven2"}]]}
 
  :refactor-nrepl     {:dependencies [[http-kit "2.3.0"]
                                      [cheshire "5.8.0"]
