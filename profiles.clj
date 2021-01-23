@@ -16,6 +16,11 @@
                                                  "-Xverify:none" #_"Improves perf"]
                       :monkeypatch-clojure-test false}
 
+ :clojars            {:deploy-repositories ^:replace [["clojars"
+                                                       {:url           "https://clojars.org/repo/",
+                                                        :sign-releases false
+                                                        :username      "vemv"}]]}
+
  ;; the following profile serves for two use cases:
  ;; * Launching `lein repl` from iTerm
  ;; * Launching an in-Emacs JVM
