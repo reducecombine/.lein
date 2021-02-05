@@ -15,8 +15,8 @@
         start-server (or (requiring-resolve 'clojure.tools.nrepl.server/start-server)
                          (requiring-resolve 'nrepl.server/start-server))
         stop-server (or (requiring-resolve 'clojure.tools.nrepl.server/stop-server)
-                         (requiring-resolve 'nrepl.server/stop-server))
-        
+                        (requiring-resolve 'nrepl.server/stop-server))
+
         n "user.nrepl.outside-refresh-dirs"
         v "server"
         fqn (symbol n v)
@@ -36,12 +36,12 @@
       (intern (symbol n)
               (symbol v)
               (start-server :port port :handler handler))
-      (-> (Runtime/getRuntime (.addShutdownHook (Thread. (fn []
-                                                           (some-> 'user/stop resolve .invoke))))))
-      (-> (Runtime/getRuntime (.addShutdownHook (Thread. (fn []
-                                                           (some-> 'dev/stop resolve .invoke))))))
-      (-> (Runtime/getRuntime (.addShutdownHook (Thread. (fn []
-                                                           (-> fqn resolve stop-server)))))))
+      (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
+                                                            (some-> 'user/stop resolve .invoke)))))
+      (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
+                                                            (some-> 'dev/stop resolve .invoke)))))
+      (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
+                                                            (-> fqn resolve stop-server))))))
 
     (Tailer/create logfile
                    (proxy [TailerListenerAdapter] []
@@ -56,7 +56,7 @@
 
     (clipboard/spit lein-command)
 
-    (println (format "\nReady. Remember that Ctrl-C will terminate the JVM!\n  →  `%s` has been copied to the clipboard."
+    (println (format "Ready. Remember that Ctrl-C will terminate the JVM!\n  →  `%s` has been copied to the clipboard."
                      base-lein-command))
 
     ;; avoid ugly `nil`:
@@ -75,12 +75,12 @@
   Note that Ctrl-C will kill the whole JVM
   (as is standard unix and `clj` behavior. 'Fixing' this brings complexities from/to nREPL)."
   []
+  ;; Set the refresh dirs:
+  (try (require 'dev) (catch Exception _)) ;; `dev` must go first for edge case related to lein checkouts
+  (try (require 'user) (catch Exception _))
+
+  ;; invoke `refresh`:
   (cisco.tools.namespace.parallel-refresh/refresh :after `start!*))
 
 (defn -main [& _]
-  ;; Set the refresh dirs:
-  (try (require 'user) (catch Exception _))
-  (try (require 'dev) (catch Exception _))
-
-  ;; invoke `refresh`:
   (start!))

@@ -1,34 +1,60 @@
 {:user               {:plugins                  [[lein-pprint "1.1.2"]
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [lein-lein "0.2.0"]
-                                                 [lein-jdk-tools "0.1.1"]]
-                      :dependencies             [[lein-subscribable-urls "0.1.0-alpha2"]]
-                      :jvm-opts                 ["-Dapple.awt.UIElement=true"
+                                                 [lein-jdk-tools "0.1.1"]
+                                                 [threatgrid/trim-sl4j-classpath "0.1.0"]]
+                      :jvm-opts                 [;; Remove useless icon from the Dock:
+                                                 "-Dapple.awt.UIElement=true"
+                                                 ;; Make more info available to debuggers:
                                                  "-Dclojure.compiler.disable-locals-clearing=true"
+                                                 ;; If failing on startup, print stacktraces directly instead of saving them to a file:
                                                  "-Dclojure.main.report=stderr"
-                                                 "-Dformatting-stack.eastwood.parallelize-linters=true"
+                                                 ;; Enable tiered compilation, for guaranteeing accurate benchmarking (at the cost of slower startup):
                                                  "-XX:+TieredCompilation"
+                                                 ;; Don't elide stacktraces:
                                                  "-XX:-OmitStackTraceInFastThrow"
-                                                 "-XX:CompressedClassSpaceSize=3G" ;; Prevents a specific type of OOMs:
+                                                 ;; Prevents a specific type of OOMs:
+                                                 "-XX:CompressedClassSpaceSize=3G"
+                                                 ;; Prevents trivial StackOverflow errors:
                                                  "-XX:MaxJavaStackTraceDepth=1000000"
-                                                 "-XX:TieredStopAtLevel=1"
+                                                 ;; Set a generous limit as the maximum that can be allocated, preventing certain types of OOMs:
                                                  "-Xmx18G"
-                                                 "-Xss6144k" ;; increase stack size x6, for preventing SO errors. The current default can be found w `java -XX:+PrintFlagsFinal -version 2>/dev/null | grep "intx ThreadStackSize"`
-                                                 "-Xverify:none" #_"Improves perf"
+                                                 ;; increase stack size x6, for preventing SO errors:
+                                                 ;;   (The current default can be found with
+                                                 ;;    `java -XX:+PrintFlagsFinal -version 2>/dev/null | grep "intx ThreadStackSize"`)
+                                                 "-Xss6144k"
+                                                 ;; Improves startup time:
+                                                 "-Xverify:none"
+                                                 ;; Enable various optimizations, for guaranteeing accurate benchmarking (at the cost of slower startup):
                                                  "-server"]
                       :monkeypatch-clojure-test false}
 
+ ;; The following flags setup GC with short STW pauses, which tend to be apt for webserver workloads.
+ ;; Taken from https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm#autoId2
+ :gcg1               {:jvm-opts ["-XX:+UseG1GC"
+                                 "-XX:MaxGCPauseMillis=200"
+                                 "-XX:ParallelGCThreads=20"
+                                 "-XX:ConcGCThreads=5"
+                                 "-XX:InitiatingHeapOccupancyPercent=70"]}
+
+ ;; Throws if core.async blocking ops (>!!, <!!, alts!!, alt!!) are used in a go block
+ ;; (added in a separate profile since some apps break on it)
  :async-checking     {:jvm-opts ["-Dclojure.core.async.go-checking=true"]}
 
- :repl               {:middleware                        [leiningen.resolve-java-sources-and-javadocs/middleware]
+ ;; remember to keep this in sync with exports.sh
+ :yourkit
+ {:jvm-opts
+  ["-agentpath:/Applications/YourKit-Java-Profiler-2019.8.app/Contents/Resources/bin/mac/libyjpagent.dylib=quiet,sessionname={YOURKIT_SESSION_NAME}"]}
+
+ :repl               {:middleware                        [leiningen.resolve-java-sources-and-javadocs/middleware
+                                                          leiningen.trim-sl4j-classpath/middleware]
                       :plugins                           [[threatgrid/resolve-java-sources-and-javadocs "1.3.0"]]
                       :resolve-java-sources-and-javadocs {:classifiers #{"sources"}}
                       :jvm-opts                          ["-Dleiningen.resolve-java-sources-and-javadocs.throw=true"]}
 
- :clojars            {:deploy-repositories ^:replace [["clojars"
-                                                       {:url           "https://clojars.org/repo/",
-                                                        :sign-releases false
-                                                        :username      "vemv"}]]}
+ :clojars            {:deploy-repositories [["clojars"
+                                             {:url           "https://clojars.org/repo/",
+                                              :sign-releases false}]]}
 
  ;; the following profile serves for two use cases:
  ;; * Launching `lein repl` from iTerm
@@ -40,17 +66,31 @@
                                        [com.nedap.staffing-solutions/utils.collections "2.1.0"]
                                        [com.stuartsierra/component.repl "0.2.0"]
                                        [criterium "0.4.5"]
+                                       [clj-kondo "2021.01.20"]
                                        [formatting-stack "4.3.0-alpha1"]
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [medley "1.2.0"]
                                        [nrepl-debugger "0.1.0-SNAPSHOT"]
                                        [org.clojure/clojure "1.10.1"]
-                                       [org.clojure/java.jmx "0.3.4"]
-                                       [org.clojure/spec.alpha "0.2.176"]
-                                       [org.clojure/tools.namespace "0.3.1"]
+                                       [org.clojure/math.combinatorics "0.1.6"]
+                                       [org.clojure/test.check "1.1.0"]
+                                       [org.clojure/java.jmx "1.0.0"]
+                                       [org.clojure/spec.alpha "0.2.194"]
+                                       [org.clojure/tools.namespace "1.1.0"]
                                        [org.clojure/tools.nrepl "0.2.13"]
-                                       [org.clojure/tools.reader "1.1.1"]
-                                       [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]]
+                                       [org.clojure/tools.reader "1.3.3"]
+                                       [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
+                                       ;; Ensure Jackson is consistent and up-to-date:
+                                       [com.fasterxml.jackson.core/jackson-annotations "2.11.2"]
+                                       [com.fasterxml.jackson.core/jackson-core "2.11.2"]
+                                       [com.fasterxml.jackson.core/jackson-databind "2.11.2"]
+                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.11.2"]
+                                       [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 "2.11.2"]
+                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.11.2"]]
+
+                      :source-paths   ["/Users/vemv/.lein/scripts"]
+
+                      :jvm-opts       ["-Dformatting-stack.eastwood.parallelize-linters=true"]
 
                       :resource-paths [;; http://rebl.cognitect.com/download.html
                                        "/Users/vemv/.lein/resources/rebl.jar"]
@@ -61,198 +101,46 @@
                       :repl-options   {:port    41235
                                        :timeout 900000
                                        :welcome "Print nothing"
-                                       :init    {:emacs-backend
-                                                 (do
-                                                   (clojure.core/require 'clj-stacktrace.repl)
-                                                   (clojure.core/require 'refactor-nrepl.core)
-                                                   (clojure.core/require 'refactor-nrepl.middleware)
-                                                   (clojure.core/require 'refactor-nrepl.analyzer)
-                                                   (clojure.core/require 'net.vemv.nrepl-debugger)
-                                                   (clojure.core/require 'clj-java-decompiler.core)
-                                                   (clojure.core/require 'lambdaisland.deep-diff)
-                                                   (clojure.core/require 'criterium.core)
-                                                   (clojure.core/require 'formatting-stack.core)
-                                                   (clojure.core/require 'formatting-stack.branch-formatter)
-                                                   (clojure.core/require 'formatting-stack.project-formatter)
-                                                   (clojure.core/require 'clojure.test)
-                                                   (clojure.core/require 'clojure.string)
-                                                   (clojure.core/require 'clojure.reflect)
-                                                   (clojure.core/require 'clojure.tools.namespace.repl)
-                                                   (clojure.core/require 'cisco.tools.namespace.parallel-refresh)
-                                                   (clojure.core/require 'com.stuartsierra.component.repl)
-                                                   (require 'eastwood.linters.implicit-dependencies)
-                                                   (alter-var-root #'eastwood.linters.implicit-dependencies/var->ns-symbol
-                                                                   (constantly (fn [var]
-                                                                                 (-> var symbol namespace symbol))))
-                                                   (clojure.core/eval '(clojure.core/create-ns 'vemv-warm))
-                                                   (clojure.core/eval '(clojure.core/intern 'vemv-warm
-                                                                                            ;; a linting function apt for a broader selection of projects.
-                                                                                            'lint!
-                                                                                            (fn [& [full?]]
-                                                                                              (formatting-stack.core/format!
-                                                                                               :formatters []
-                                                                                               :in-background? false
-                                                                                               :linters [(-> (formatting-stack.linters.eastwood/new {})
-                                                                                                             (assoc :strategies (conj (if full?
-                                                                                                                                        formatting-stack.project-formatter/default-strategies
-                                                                                                                                        formatting-stack.defaults/extended-strategies)
-                                                                                                                                      formatting-stack.strategies/exclude-cljs
-                                                                                                                                      formatting-stack.strategies/jvm-requirable-files
-                                                                                                                                      formatting-stack.strategies/namespaces-within-refresh-dirs-only)))])))))}}}
+                                       :init    {:emacs-backend (clojure.core/require 'vemv.emacs-backend)}}}
 
- :iroh-global        {:dependencies      [[net.vemv/rewrite-clj "0.6.2" #_"https://git.io/fhhbQ"]]
-                      :source-paths      ["/Users/vemv/trapperkeeper-webserver-jetty9/test/clj"
+ :emacs-backend-init {:repl-options {:init {:emacs-backend-init (clojure.core/require 'vemv.anyrefresh)}}}
+
+ :iroh-global        {:dependencies      [[threatgrid/trapperkeeper "3.1.0"]
+                                          [threatgrid/trapperkeeper-webserver-jetty9 "4.2.0"]]
+                      :source-paths      [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/clj"
                                           "/Users/vemv/formatting-stack.alias-rewriter/src"
                                           ;; `lein with-profile -user cljx once`:
                                           "/Users/vemv/schema/target/generated/src/clj"]
-                      :java-source-paths ["/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]
-                      :jvm-opts          ["-Diroh.dev.logging.level=:error"
+                      :java-source-paths [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]
+                      :jvm-opts          ["-Diroh.test.dotests.elide-explanations=true"
+                                          "-Diroh.dev.logging.level=:error"
                                           "-Diroh.dev.logging.enable-println-appender=false"
                                           ;; "-Diroh.enable-response-profiling=true"
                                           "-Diroh.dev.logging.enable-file-appender=true"
                                           "-Diroh.dev.logging.order-chronologically=false"]}
 
- :gcg1               {:jvm-opts ["-XX:+UseG1GC"
-                                 "-XX:MaxGCPauseMillis=200"
-                                 "-XX:ParallelGCThreads=20"
-                                 "-XX:ConcGCThreads=5"
-                                 "-XX:InitiatingHeapOccupancyPercent=70"]}
-
  :terminal           {:repl-options {:port 41233}}
 
- ;; remember to keep this in sync with exports.sh
- :yourkit            {:jvm-opts ["-agentpath:/Applications/YourKit-Java-Profiler-2019.8.app/Contents/Resources/bin/mac/libyjpagent.dylib"]}
-
- :emacs-backend-init {:repl-options {:init {:emacs-backend-init
-                                            (do
-                                              (clojure.core/require 'clojure.tools.namespace.repl)
-                                              (clojure.core/require 'com.stuartsierra.component.repl)
-                                              ;; the eval business prevents `refactor-nrepl.analyzer/warm-ast-cache` from throwing "not found"
-                                              (when-not (or (-> "user.dir" System/getProperty (.contains "/iroh"))
-                                                            (-> "user.dir" System/getProperty (.contains "/ctia")))
-                                                (clojure.core/alter-var-root #'clojure.test/*load-tests* (clojure.core/constantly false)))
-                                              (clojure.core/eval '(clojure.core/create-ns 'vemv-warm))
-                                              (clojure.core/eval '(try
-                                                                    ;; Avoid `require`ing `dev` if it's not in this project
-                                                                    ;; (given lein checkouts can bring extraneous dev nses)
-                                                                    (when (->> ["dev/dev.clj"
-                                                                                "src/dev.clj"]
-                                                                               (some (fn [^String filename]
-                                                                                       (-> filename
-                                                                                           java.io.File.
-                                                                                           .exists))))
-                                                                      (require 'dev))
-
-                                                                    ;; maybe there was a namespaces called `dev`, but without any t.n setup:
-                                                                    (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
-                                                                      (throw (ex-info "(Exception from ~/.lein/profiles.clj. Safe to ignore)" {})))
-
-                                                                    (catch Exception e ;; no `dev` ns, or `dev` w/o t.n.setup
-                                                                      (clojure.core/-> e .printStackTrace)
-                                                                      (try
-                                                                        ;; Avoid `require`ing `user` if it's not in this project
-                                                                        ;; (given lein checkouts can bring extraneous dev nses)
-                                                                        (when (->> ["dev/user.clj"
-                                                                                    "src/user.clj"]
-                                                                                   (some (fn [^String filename]
-                                                                                           (-> filename
-                                                                                               java.io.File.
-                                                                                               .exists))))
-                                                                          (require 'user))
-                                                                        (catch Exception _))
-
-                                                                      (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
-                                                                        (->> ["dev"
-                                                                              "libs"
-                                                                              "modules"
-                                                                              (when-not (-> "src/main/clojure"
-                                                                                            java.io.File.
-                                                                                            .exists)
-                                                                                "src")
-                                                                              (when-not (-> "test/main/clojure"
-                                                                                            java.io.File.
-                                                                                            .exists)
-                                                                                "test")
-                                                                              "main"
-                                                                              "clojure"
-                                                                              "src/main/clojure"
-                                                                              "src/test/clojure"]
-                                                                             (filter (fn [^String x]
-                                                                                       (some-> x java.io.File. .exists)))
-                                                                             (apply clojure.tools.namespace.repl/set-refresh-dirs))))))
-                                              (clojure.core/eval '(clojure.core/intern 'vemv-warm
-                                                                                       'vemv-warm
-                                                                                       (clojure.core/delay
-                                                                                         (when-not (or (-> "user.dir" System/getProperty (.contains "/iroh"))
-                                                                                                       (-> "user.dir" System/getProperty (.contains "/ctia"))
-                                                                                                       ;; ^ I found in yourkit that `warm-ast-cache` can be particularly slow in `ctia-investigate`
-                                                                                                       ;; guard against file with intentionally broken syntax:
-                                                                                                       (-> "user.dir" System/getProperty (.contains "/formatting-stack")))
-                                                                                           (refactor-nrepl.analyzer/warm-ast-cache)))))
-                                              (clojure.core/eval '(clojure.core/intern 'vemv-warm
-                                                                                       'init-fn
-                                                                                       com.stuartsierra.component.repl/initializer))
-                                              (clojure.core/eval '(clojure.core/intern
-                                                                   'vemv-warm
-                                                                   'vemv-do-warm
-                                                                   (fn []
-                                                                     (if (eval '(clojure.core/= vemv-warm/init-fn
-                                                                                                com.stuartsierra.component.repl/initializer))
-                                                                       ;; ... this means `(set-init)` has not been invoked, which means that this project does not use Sierra's `reset`:
-                                                                       (do
-                                                                         @vemv-warm/vemv-warm
-                                                                         ;; invoke home-grown `reset` functions, e.g. https://git.io/Jff6j :
-                                                                         #_ (some-> 'user/reset resolve .invoke))
-                                                                       (clojure.core/when-let [v (try
-                                                                                                   (eval '(com.stuartsierra.component.repl/reset))
-                                                                                                   (future ;; wrap in a future - it is assumed projects with a System can be large:
-                                                                                                     @vemv-warm/vemv-warm)
-                                                                                                   (catch java.lang.Throwable v
-                                                                                                     (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
-                                                                                                       (eval '(clojure.tools.namespace.repl/clear)))
-                                                                                                     (clojure.core/when (com.stuartsierra.component/ex-component? v)
-                                                                                                       (clojure.core/some-> v
-                                                                                                                            clojure.core/ex-data
-                                                                                                                            :system
-                                                                                                                            com.stuartsierra.component/stop))
-                                                                                                     v))]
-                                                                         (clojure.core/when (clojure.core/instance? java.lang.Throwable v)
-                                                                           (clojure.core/when (clojure.core/instance? java.io.FileNotFoundException v)
-                                                                             (eval '(clojure.tools.namespace.repl/clear)))
-                                                                           (clojure.core/-> v .printStackTrace)))))))
-
-                                              (clojure.core/let [v (clojure.core/eval '(cisco.tools.namespace.parallel-refresh/refresh :after 'vemv-warm/vemv-do-warm))]
-                                                (clojure.core/when (clojure.core/instance? java.lang.Exception v)
-                                                  (clojure.core/println v)))
-
-                                              ;; particularly useful for projects without a `t.n` setup whatsoever
-                                              (let [used (->> *ns* ns-refers keys set)]
-                                                (->> '[clear refresh refresh-dirs set-refresh-dirs]
-                                                     (remove used)
-                                                     (vec)
-                                                     (list 'clojure.tools.namespace.repl :only)
-                                                     (apply clojure.core/refer))))}}}
-
- :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.1.1"]
-                                     [cider/cider-nrepl "0.99.9" :exclusions [cljfmt]] ;; XXX release. try it via lein
+ :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.2.2"]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
-                                     ;; XXX c.t.nrepl
-                                     [org.clojure/clojure "1.10.99"]]
+                                     [org.clojure/clojure "1.11.99"]]
 
                       :jvm-opts     ["-Djava.awt.headless=false" ;; ensure the clipboard is usable
-                                     "-Dcisco.tools.namespace.parallel-refresh.debug=true"
+                                     #_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
                                      ;; experiment - try triggering GC more frequently:
+                                     ;; (didn't work originally, but it might after the SoftRef hack)
                                      ;; "-XX:MaxMetaspaceExpansion=0"
                                      ]
-                      :source-paths ["/Users/vemv/.lein/scripts"]
                       :aliases      {"nrepl" ["run" "-m" "vemv.nrepl"]}
                       :repositories [["https://packagecloud.io/vemv/clojure/maven2"
                                       {:url "https://packagecloud.io/vemv/clojure/maven2"}]]}
 
+ ;; for hacking on refactor-nrepl itself
  :refactor-nrepl     {:dependencies [[http-kit "2.3.0"]
                                      [cheshire "5.8.0"]
                                      [org.clojure/tools.analyzer.jvm "0.7.1"]
-                                     [org.clojure/tools.namespace "0.3.0-alpha3" :exclusions [org.clojure/tools.reader]]
+                                     [org.clojure/tools.namespace "0.3.0-alpha3"
+                                      :exclusions [org.clojure/tools.reader]]
                                      [org.clojure/tools.reader "1.1.1"]
                                      [cider/orchard "0.3.0"]
                                      [cljfmt "0.6.3"]
