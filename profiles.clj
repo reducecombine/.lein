@@ -1,5 +1,6 @@
 {:user               {:plugins                  [[lein-pprint "1.1.2"]
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
+                                                 [threatgrid/lein-lean "0.6.0"]
                                                  [lein-lein "0.2.0"]
                                                  [lein-jdk-tools "0.1.1"]
                                                  [threatgrid/trim-sl4j-classpath "0.1.0"]]
@@ -29,6 +30,11 @@
                                                  "-server"]
                       :monkeypatch-clojure-test false}
 
+ :rebel              {:dependencies [[com.bhauman/rebel-readline "0.1.4"]]}
+
+ :reply              {:dependencies [[reply "0.3.7"]
+                                     [net.cgrand/parsley "0.9.3"]]}
+
  ;; The following flags setup GC with short STW pauses, which tend to be apt for webserver workloads.
  ;; Taken from https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm#autoId2
  :gcg1               {:jvm-opts ["-XX:+UseG1GC"
@@ -57,27 +63,26 @@
                                               :sign-releases false}]]}
 
  ;; the following profile serves for two use cases:
- ;; * Launching `lein repl` from iTerm
+ ;; * Launching `lein repl` from iTerm, that Emacs can eventually connect to
  ;; * Launching an in-Emacs JVM
- ;; Perhaps for the latter, the :plugins section is redundant. Hasn't given problems so far.
- :emacs-backend      {:dependencies   [[cider/cider-nrepl "0.16.0"]
-                                       [clj-stacktrace "0.2.8"]
+ :emacs-backend      {:dependencies   [[clj-stacktrace "0.2.8"]
                                        [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
                                        [com.nedap.staffing-solutions/utils.collections "2.1.0"]
                                        [com.stuartsierra/component.repl "0.2.0"]
                                        [criterium "0.4.5"]
                                        [clj-kondo "2021.01.20"]
                                        [formatting-stack "4.3.0-alpha1"]
+                                       [org.clojure/clojurescript "1.10.764"] ;; formatting-stack transitive, removes a warning
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [medley "1.2.0"]
-                                       [nrepl-debugger "0.1.0-SNAPSHOT"]
+                                       [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
                                        [org.clojure/clojure "1.10.1"]
                                        [org.clojure/math.combinatorics "0.1.6"]
                                        [org.clojure/test.check "1.1.0"]
                                        [org.clojure/java.jmx "1.0.0"]
                                        [org.clojure/spec.alpha "0.2.194"]
                                        [org.clojure/tools.namespace "1.1.0"]
-                                       [org.clojure/tools.nrepl "0.2.13"]
+                                       [org.clojure/tools.nrepl "0.2.13"] ;; matches with my lib/cider/cider.el
                                        [org.clojure/tools.reader "1.3.3"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
                                        ;; Ensure Jackson is consistent and up-to-date:
@@ -95,9 +100,6 @@
                       :resource-paths [;; http://rebl.cognitect.com/download.html
                                        "/Users/vemv/.lein/resources/rebl.jar"]
 
-                      :plugins        [[refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging]]
-                                       [cider/cider-nrepl "0.16.0"]]
-
                       :repl-options   {:port    41235
                                        :timeout 900000
                                        :welcome "Print nothing"
@@ -105,8 +107,9 @@
 
  :emacs-backend-init {:repl-options {:init {:emacs-backend-init (clojure.core/require 'vemv.anyrefresh)}}}
 
- :iroh-global        {:dependencies      [[threatgrid/trapperkeeper "3.1.0"]
+ :iroh-global        {:dependencies      [[threatgrid/trapperkeeper "3.1.0" :exclusions [nrepl]]
                                           [threatgrid/trapperkeeper-webserver-jetty9 "4.2.0"]]
+                      :target-path       "target/%s/"
                       :source-paths      [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/clj"
                                           "/Users/vemv/formatting-stack.alias-rewriter/src"
                                           ;; `lein with-profile -user cljx once`:
@@ -120,6 +123,11 @@
                                           "-Diroh.dev.logging.order-chronologically=false"]}
 
  :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.2.2"]
+                                     [cider/cider-nrepl "0.99.9" :exclusions [cljfmt compliment nrepl/nrepl]]
+                                     [compliment "0.3.11"]
+                                     [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
+                                     [refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging
+                                                                          nrepl]]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
                                      [org.clojure/clojure "1.11.99"]]
 
@@ -149,7 +157,6 @@
 
  :emacs-figwheel     {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                      [figwheel-sidecar "0.5.16"]]
-                      :plugins      [[cider/cider-nrepl "0.16.0"]]
                       :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
                       :figwheel     {:nrepl-middleware ["cider.nrepl/cider-middleware"
                                                         "refactor-nrepl.middleware/wrap-refactor"
