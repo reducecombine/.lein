@@ -119,8 +119,6 @@
                                           "-Diroh.dev.logging.enable-file-appender=true"
                                           "-Diroh.dev.logging.order-chronologically=false"]}
 
- :terminal           {:repl-options {:port 41233}}
-
  :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.2.2"]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
                                      [org.clojure/clojure "1.11.99"]]

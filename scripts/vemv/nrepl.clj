@@ -11,7 +11,7 @@
 (defn start!* []
   ;; Make it possible to use the legacy c.t.nrepl - which some people might need:
   (let [port (or (some-> "NREPL_PORT" System/getenv Long/parseLong)
-                 48372)
+                 (+ 20000 (rand-int 20000)))
         start-server (or (requiring-resolve 'clojure.tools.nrepl.server/start-server)
                          (requiring-resolve 'nrepl.server/start-server))
         stop-server (or (requiring-resolve 'clojure.tools.nrepl.server/stop-server)
