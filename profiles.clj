@@ -71,7 +71,7 @@
                                        [com.stuartsierra/component.repl "0.2.0"]
                                        [criterium "0.4.5"]
                                        [clj-kondo "2021.01.20"]
-                                       [formatting-stack "4.3.0-alpha1"]
+                                       [formatting-stack "4.3.0"]
                                        [org.clojure/clojurescript "1.10.764"] ;; formatting-stack transitive, removes a warning
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [medley "1.2.0"]
