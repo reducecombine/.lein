@@ -1,6 +1,9 @@
 (ns vemv.emacs-backend
   "Performs `require`s that my Emacs setup assumes."
-  (:require [clojure.java.io :as io]))
+  (:require
+   [clojure.java.io :as io]
+   [vemv.usages]
+   [vemv]))
 
 (clojure.core/require 'clj-stacktrace.repl)
 (clojure.core/require 'refactor-nrepl.core)
