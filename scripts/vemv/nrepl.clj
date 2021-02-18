@@ -120,12 +120,12 @@
 
   (-> *compile-path* java.io.File. .mkdirs)
 
-  (binding [*compile-files* false #_  true] ;; works but hits usual AOT pitfalls in big apps (defprotocol, potemkin)
+  (binding [*compile-files* false] ;; works but hits usual AOT pitfalls in big apps (defprotocol, potemkin)
     (require 'vemv.emacs-backend)
     ;; Set the refresh dirs:
     (when (-> (java.io.File. "dev" "user.clj")
               .exists)
-      (require 'user :reload-all))
+      (require 'user))
 
     (when (-> (java.io.File. "dev" "dev.clj")
               .exists)
