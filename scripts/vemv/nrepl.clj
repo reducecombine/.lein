@@ -8,7 +8,7 @@
   (:gen-class)
   (:import
    (java.io File PrintStream)
-   (org.apache.commons.io.input Tailer TailerListenerAdapter)))
+   (org.apache.commons.io.input Tailer TailerListener)))
 
 (try
   (require 'clojure.tools.nrepl) ;; explicit require so that refactor-nrepl can discover it
@@ -73,9 +73,15 @@
 
       (when large-project?
         (Tailer/create logfile
-                       (proxy [TailerListenerAdapter] []
-                         (handle [line]
-                           (-> system-out (.println line))))
+                       (reify TailerListener
+                         (^void handle [_ ^String line]
+                          (-> system-out (.println line)))
+                         (^void handle [_ ^Exception e]
+                          (-> system-out (.println (->> e .getMessage)))
+                          (-> system-out (.println (->> e .getStackTrace (clojure.string/join "\n")))))
+                         (^void init [_ ^Tailer e])
+                         (^void fileNotFound [_])
+                         (^void fileRotated [_]))
                        50))
 
       (when-not skip-reset?
@@ -113,10 +119,7 @@
 
   Does not start a repl in the terminal itself (as it's problematic).
 
-  Tails `log/dev.log` so that this terminal tab is doing something visually useful.
-
-  Note that Ctrl-C will kill the whole JVM
-  (as is standard unix and `clj` behavior. 'Fixing' this brings complexities from/to nREPL)."
+  Tails `log/dev.log` so that this terminal tab is doing something visually useful."
   []
 
   (-> *compile-path* java.io.File. .mkdirs)
