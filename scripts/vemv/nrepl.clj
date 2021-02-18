@@ -1,5 +1,6 @@
 (ns vemv.nrepl
   (:require
+   [cisco.tools.namespace.parallel-refresh]
    [rebel-readline.clojure.line-reader]
    [rebel-readline.clojure.main]
    [rebel-readline.core])
@@ -131,6 +132,10 @@
       (require 'dev))
     (when-not (seq @(requiring-resolve 'clojure.tools.namespace.repl/refresh-dirs))
       ((requiring-resolve 'clojure.tools.namespace.repl/set-refresh-dirs) "src" "dev" "test"))
+
+    ;; idea: don't compile any ns that (transitively) depends on schema, potemkin, trapperkeeper, c.t.logging
+    (when (-> "user.dir" System/getProperty (.contains "iroh"))
+      ((-> 'cisco.tools.namespace.parallel-refresh/compile-3rd-party-deps! requiring-resolve)))
 
     (let [v ((requiring-resolve 'cisco.tools.namespace.parallel-refresh/refresh) :after `start!*)]
       (when-not (#{:ok} v)
