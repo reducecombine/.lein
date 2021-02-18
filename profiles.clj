@@ -80,6 +80,7 @@
                                        [org.clojure/math.combinatorics "0.1.6"]
                                        [org.clojure/test.check "1.1.0"]
                                        [org.clojure/java.jmx "1.0.0"]
+                                       [org.clojure/tools.trace "0.7.11"]
                                        [org.clojure/spec.alpha "0.2.194"]
                                        [org.clojure/tools.namespace "1.1.0"]
                                        [org.clojure/tools.nrepl "0.2.13"] ;; matches with my lib/cider/cider.el
