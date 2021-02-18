@@ -74,6 +74,7 @@
                                        [formatting-stack "4.3.0"]
                                        [org.clojure/clojurescript "1.10.764"] ;; formatting-stack transitive, removes a warning
                                        [lambdaisland/deep-diff "0.0-29"]
+                                       [lambdaisland/deep-diff2 "2.0.108"]
                                        [medley "1.2.0"]
                                        [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
                                        [org.clojure/clojure "1.10.1"]
