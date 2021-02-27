@@ -8,6 +8,7 @@
   (:gen-class)
   (:import
    (java.io File PrintStream)
+   (org.apache.commons.io IOUtils)
    (org.apache.commons.io.input Tailer TailerListener)))
 
 (try
@@ -82,7 +83,10 @@
                          (^void init [_ ^Tailer e])
                          (^void fileNotFound [_])
                          (^void fileRotated [_]))
-                       50))
+                       50
+                       false ;; tail from the beginning of the file.
+                       true ;; reOpen https://issues.apache.org/jira/browse/IO-399
+                       IOUtils/DEFAULT_BUFFER_SIZE))
 
       (when-not skip-reset?
         (try
