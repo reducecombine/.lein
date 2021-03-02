@@ -81,6 +81,7 @@
                                        [medley "1.2.0"]
                                        [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
                                        [org.clojure/clojure "1.10.1"]
+                                       [org.clojure/core.incubator "0.1.4"] ;; ensure it's recent enought to avoid a warning
                                        [org.clojure/math.combinatorics "0.1.6"]
                                        [org.clojure/test.check "1.1.0"]
                                        [org.clojure/java.jmx "1.0.0"]
