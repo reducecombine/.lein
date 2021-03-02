@@ -24,6 +24,9 @@
                                                  ;;   (The current default can be found with
                                                  ;;    `java -XX:+PrintFlagsFinal -version 2>/dev/null | grep "intx ThreadStackSize"`)
                                                  "-Xss6144k"
+                                                 ;; Set a minimum amount of memory that matches/exceeds a given repl's initial usage (including various tooling).
+                                                 ;; This way, initial performance improves:
+                                                 "-Xms6G"
                                                  ;; Improves startup time:
                                                  "-Xverify:none"
                                                  ;; Enable various optimizations, for guaranteeing accurate benchmarking (at the cost of slower startup):
