@@ -12,7 +12,9 @@
    (org.apache.commons.io.input Tailer TailerListener)))
 
 (try
-  (require 'clojure.tools.nrepl) ;; explicit require so that refactor-nrepl can discover it
+  ;; explicit require so that refactor-nrepl can discover it
+  ;; NOTE: this must be placed before any refactor-nrepl require.
+  (require 'clojure.tools.nrepl)
   (catch Exception _
     ;; most people don't use c.t.nrepl
     ))

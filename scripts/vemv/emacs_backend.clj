@@ -5,6 +5,14 @@
    [vemv.usages]
    [vemv]))
 
+(try
+  ;; explicit require so that refactor-nrepl can discover it
+  ;; NOTE: this must be placed before any refactor-nrepl require.
+  (require 'clojure.tools.nrepl)
+  (catch Exception _
+    ;; most people don't use c.t.nrepl
+    ))
+
 (clojure.core/require 'clj-stacktrace.repl)
 (clojure.core/require 'refactor-nrepl.core)
 (clojure.core/require 'refactor-nrepl.middleware)
