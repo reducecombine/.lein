@@ -43,7 +43,7 @@
 
  ;; The following flags setup GC with short STW pauses, which tend to be apt for webserver workloads.
  ;; Taken from https://docs.oracle.com/cd/E40972_01/doc.70/e40973/cnf_jvmgc.htm#autoId2
- :gcg1               {:jvm-opts ["-XX:+UseG1GC"
+ :g1gc               {:jvm-opts ["-XX:+UseG1GC"
                                  "-XX:MaxGCPauseMillis=200"
                                  "-XX:ParallelGCThreads=20"
                                  "-XX:ConcGCThreads=5"
