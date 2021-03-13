@@ -91,7 +91,8 @@
                                        [org.clojure/tools.trace "0.7.11"]
                                        [org.clojure/spec.alpha "0.2.194"]
                                        [org.clojure/tools.namespace "1.1.0"]
-                                       [org.clojure/tools.nrepl "0.2.13"] ;; matches with my lib/cider/cider.el
+                                       ;; `lein with-profile -user,-dev do clean, pom, jar`:
+                                       [org.clojure/tools.nrepl "1.100.0"] ;; 0.2.13 matches with my lib/cider/cider.el. 1.99.0 is my fork
                                        [org.clojure/tools.reader "1.3.3"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
                                        ;; Ensure Jackson is consistent and up-to-date:
@@ -101,6 +102,9 @@
                                        [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.11.2"]
                                        [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 "2.11.2"]
                                        [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.11.2"]]
+
+                      :repositories   [["https://packagecloud.io/vemv/clojure/maven2"
+                                        {:url "https://packagecloud.io/vemv/clojure/maven2"}]]
 
                       :source-paths   ["/Users/vemv/.lein/scripts"]
 
@@ -132,14 +136,19 @@
                                           "-Diroh.dev.logging.enable-file-appender=true"
                                           "-Diroh.dev.logging.order-chronologically=false"]}
 
- :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.2.2"]
+ :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.3.0"]
                                      [cider/cider-nrepl "0.99.9" :exclusions [cljfmt compliment nrepl/nrepl]]
                                      [compliment "0.3.11"]
                                      [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
                                      [refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging
+                                                                          cider-nrepl
                                                                           nrepl]]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
-                                     [org.clojure/clojure "1.11.99"]]
+                                     [org.clojure/clojure "1.11.99"]
+                                     ;; How to create the following artifact:
+                                     ;; * rename sources package to target/clojuresources-1.10.99.jar
+                                     ;; * package_cloud push vemv/clojure target/clojuresources-1.10.99.jar --coordinates=org.clojuresources:clojuresources:1.10.99
+                                     [org.clojuresources/clojuresources "1.10.99"]]
 
                       :jvm-opts     ["-Djava.awt.headless=false" ;; ensure the clipboard is usable
                                      #_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
@@ -147,9 +156,7 @@
                                      ;; (didn't work originally, but it might after the SoftRef hack)
                                      ;; "-XX:MaxMetaspaceExpansion=0"
                                      ]
-                      :aliases      {"nrepl" ["run" "-m" "vemv.nrepl"]}
-                      :repositories [["https://packagecloud.io/vemv/clojure/maven2"
-                                      {:url "https://packagecloud.io/vemv/clojure/maven2"}]]}
+                      :aliases      {"nrepl" ["run" "-m" "vemv.nrepl"]}}
 
  ;; for hacking on refactor-nrepl itself
  :refactor-nrepl     {:dependencies [[http-kit "2.3.0"]

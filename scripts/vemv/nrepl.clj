@@ -1,5 +1,6 @@
 (ns vemv.nrepl
   (:require
+   [vemv.emacs-backend]
    [clojure.tools.namespace.repl]
    [cisco.tools.namespace.parallel-refresh]
    [rebel-readline.clojure.line-reader]
@@ -26,9 +27,9 @@
                                         (-> thread# .stop)))))
 
 (defn start!* [& [skip-reset?]]
-  ;; Make it possible to use the legacy c.t.nrepl - which some people might need:
   (let [port (or (some-> "NREPL_PORT" System/getenv Long/parseLong)
                  (+ 20000 (rand-int 20000)))
+        ;; Make it possible to use the legacy c.t.nrepl - which some people might need:
         start-server (or (requiring-resolve 'clojure.tools.nrepl.server/start-server)
                          (requiring-resolve 'nrepl.server/start-server))
         stop-server (or (requiring-resolve 'clojure.tools.nrepl.server/stop-server)
@@ -128,28 +129,23 @@
   Tails `log/dev.log` so that this terminal tab is doing something visually useful."
   []
 
-  (-> *compile-path* java.io.File. .mkdirs)
+  ;; Set the refresh dirs:
+  (when (-> (java.io.File. "dev" "user.clj")
+            .exists)
+    (require 'user))
 
-  (binding [*compile-files* false] ;; works but hits usual AOT pitfalls in big apps (defprotocol, potemkin)
-    (require 'vemv.emacs-backend)
-    ;; Set the refresh dirs:
-    (when (-> (java.io.File. "dev" "user.clj")
-              .exists)
-      (require 'user))
+  (when (-> (java.io.File. "dev" "dev.clj")
+            .exists)
+    (require 'dev))
 
-    (when (-> (java.io.File. "dev" "dev.clj")
-              .exists)
-      (require 'dev))
-    (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
-      (clojure.tools.namespace.repl/set-refresh-dirs "src" "dev" "test"))
+  (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
+    (clojure.tools.namespace.repl/set-refresh-dirs "src" "dev" "test"))
 
-    ;; idea: don't compile any ns that (transitively) depends on schema, potemkin, trapperkeeper, c.t.logging
-    (when (-> "user.dir" System/getProperty (.contains "iroh"))
-      (cisco.tools.namespace.parallel-refresh/compile-3rd-party-deps!))
+  (cisco.tools.namespace.parallel-refresh/compile-3rd-party-deps!)
 
-    (let [v (cisco.tools.namespace.parallel-refresh/refresh :after `start!*)]
-      (when-not (#{:ok} v)
-        (start!* :skip-reset)))))
+  (let [v (cisco.tools.namespace.parallel-refresh/refresh :after `start!*)]
+    (when-not (#{:ok} v)
+      (start!* :skip-reset))))
 
 (defn -main [& _]
   (start!))
