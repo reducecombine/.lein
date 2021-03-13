@@ -33,6 +33,9 @@
                                                  "-server"]
                       :monkeypatch-clojure-test false}
 
+ ;; Simulates the maximum heap allocation that a process can have when Xmx is left unconfigured:
+ :low-mem            {:jvm-opts ["-Xmx1G"]}
+
  :rebel              {:dependencies [[com.bhauman/rebel-readline "0.1.4"]]}
 
  :reply              {:dependencies [[reply "0.3.7"]
