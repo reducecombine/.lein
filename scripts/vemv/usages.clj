@@ -3,6 +3,7 @@
    [clj-kondo.core :as clj-kondo]
    [clojure.pprint :refer [pprint]]
    [formatting-stack.core]
+   [formatting-stack.linters.kondo]
    [formatting-stack.kondo-classpath-cache]
    [formatting-stack.strategies :as strategies]
    [clojure.string :as string]))
@@ -16,7 +17,8 @@
 (defn usages [var-name]
   @formatting-stack.kondo-classpath-cache/classpath-cache
   (let [lint (project-files)
-        {{:keys [var-usages]} :analysis} (clj-kondo/run! {:config   {:output {:analysis true}}
+        {{:keys [var-usages]} :analysis} (clj-kondo/run! {:config   {:output  {:analysis true}
+                                                                     :lint-as (:lint-as formatting-stack.linters.kondo/default-options)}
                                                           :parallel true
                                                           :lint     lint})
         ns-to-find (-> var-name namespace symbol)
