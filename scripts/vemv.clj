@@ -1,5 +1,7 @@
 (ns vemv
   (:require
+   [clojure.java.shell :refer [sh]]
+   [formatting-stack.processors.test-runner]
    [clojure.test]
    [formatting-stack.linters.one-resource-per-ns]
    [lambdaisland.deep-diff]
@@ -30,3 +32,13 @@
           (string/replace "file:" "")))
 
 (def ns-sym->filename (memoize ns-sym->filename*))
+
+(defn commit! [& directives]
+  (and (formatting-stack.processors.test-runner/test!)
+       #_ (some-> 'user.format/clean-staged-namespaces! resolve deref .call)
+       (do
+         (sh "git" "add" "-A")
+         ;; XXX backup branch
+         (sh "git" "commit")))
+  (when (->> directives (some #{:p}))
+    (sh "git" "push")))
