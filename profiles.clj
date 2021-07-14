@@ -1,4 +1,5 @@
-{:user               {:plugins                  [[lein-pprint "1.1.2"]
+{:user               {:plugins                  [[com.github.liquidz/antq "RELEASE"]
+                                                 [lein-pprint "1.1.2"]
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [threatgrid/lein-lean "0.6.0"]
                                                  [lein-lein "0.2.0"]
