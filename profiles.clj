@@ -4,7 +4,7 @@
                                                  [threatgrid/lein-lean "0.6.0"]
                                                  [lein-lein "0.2.0"]
                                                  [lein-jdk-tools "0.1.1"]
-                                                 [threatgrid/trim-sl4j-classpath "0.1.0"]]
+                                                 [threatgrid/trim-sl4j-classpath "0.2.0"]]
                       :jvm-opts                 [;; Remove useless icon from the Dock:
                                                  "-Dapple.awt.UIElement=true"
                                                  ;; Make more info available to debuggers:
