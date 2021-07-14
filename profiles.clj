@@ -89,7 +89,7 @@
                                        [com.nedap.staffing-solutions/utils.collections "2.2.0"]
                                        [criterium "0.4.5"]
                                        [com.gfredericks/lein-how-to-ns "0.2.9"]
-                                       [clj-kondo "2021.06.01"]
+                                       [clj-kondo "2021.06.18"]
                                        [formatting-stack "4.3.0"]
                                        [org.clojure/clojurescript "1.10.764"] ;; formatting-stack transitive, removes a warning
                                        [lambdaisland/deep-diff "0.0-29"]
@@ -163,6 +163,11 @@
                                           "-Diroh.dev.logging.order-chronologically=false"]}
 
  :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.4.1" :exclusions [org.clojure/clojure]]
+
+                                     ;; How to create the following artifact:
+                                     ;; ~/cider-nrepl at `vemv` branch
+                                     ;; ./build.sh
+                                     ;; package_cloud push vemv/cider target/cider-nrepl-0.99.9.jar
                                      [cider/cider-nrepl "0.99.9" :exclusions [cljfmt compliment nrepl/nrepl]]
                                      [compliment "0.3.11"]
                                      [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
@@ -170,11 +175,14 @@
                                                                           cider-nrepl
                                                                           nrepl]]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
-                                     [org.clojure/clojure "1.11.99"]
                                      ;; How to create the following artifact:
-                                     ;; * rename sources package to target/clojuresources-1.10.99.jar
-                                     ;; * package_cloud push vemv/clojure target/clojuresources-1.10.99.jar --coordinates=org.clojuresources:clojuresources:1.10.99
-                                     [org.clojuresources/clojuresources "1.10.99"]]
+                                     ;; mvn clean package
+                                     ;; package_cloud push vemv/clojure target/clojure-1.10.100.jar
+                                     [org.clojure/clojure "1.10.100"] ;; version 1.11 with weakref patch applied. (pretends to be 1.10 b/c of a kondo thing)
+                                     ;; How to create the following artifact:
+                                     ;; * rename sources package in target/ to clojuresources-1.10.100.jar
+                                     ;; * package_cloud push vemv/clojure target/clojuresources-1.10.100.jar --coordinates=org.clojuresources:clojuresources:1.10.100
+                                     [org.clojuresources/clojuresources "1.10.100"]]
 
                       :jvm-opts     ["-Djava.awt.headless=false" ;; ensure the clipboard is usable
                                      #_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
