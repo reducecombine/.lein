@@ -113,7 +113,8 @@
                       :repositories   [["https://packagecloud.io/vemv/clojure/maven2"
                                         {:url "https://packagecloud.io/vemv/clojure/maven2"}]]
 
-                      :source-paths   ["/Users/vemv/.lein/scripts"]
+                      :source-paths   ["/Users/vemv/.lein/scripts"
+                                       "/Users/vemv/formatting-stack.alias-rewriter/src"]
 
                       :jvm-opts       ["-Dformatting-stack.eastwood.parallelize-linters=true"]
 
