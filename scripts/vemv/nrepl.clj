@@ -29,6 +29,9 @@
                                         (-> thread# .stop)))))
 
 (defn start!* [& [skip-reset?]]
+  (try
+    (-> cisco.tools.namespace.parallel-refresh/refresh-lock .unlock)
+    (catch java.lang.IllegalMonitorStateException _))
   (let [port (or (some-> "NREPL_PORT" System/getenv Long/parseLong)
                  (+ 20000 (rand-int 20000)))
         ;; Make it possible to use the legacy c.t.nrepl - which some people might need:
@@ -146,7 +149,7 @@
   (cisco.tools.namespace.parallel-refresh/compile-3rd-party-deps!)
 
   (let [v (cisco.tools.namespace.parallel-refresh/refresh :after `start!*)]
-    (when-not (#{:ok} v)
+    (when-not (#{:ok cisco.tools.namespace.parallel-refresh/ok-result-marker} v)
       (start!* :skip-reset))))
 
 (defn -main [& _]
