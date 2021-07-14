@@ -2,9 +2,11 @@
                                                  [lein-pprint "1.1.2"]
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [threatgrid/lein-lean "0.6.0"]
+                                                 [jonase/eastwood "0.8.1"]
                                                  [lein-lein "0.2.0"]
                                                  [lein-jdk-tools "0.1.1"]
                                                  [threatgrid/trim-sl4j-classpath "0.2.0"]]
+                      :dependencies             [[jonase/eastwood "0.8.1"]]
                       :jvm-opts                 [;; Remove useless icon from the Dock:
                                                  "-Dapple.awt.UIElement=true"
                                                  ;; Make more info available to debuggers:
