@@ -12,6 +12,8 @@
    (org.apache.commons.io IOUtils)
    (org.apache.commons.io.input Tailer TailerListener)))
 
+(require 'vemv.anyrefresh)
+
 (try
   ;; explicit require so that refactor-nrepl can discover it
   ;; NOTE: this must be placed before any refactor-nrepl require.
