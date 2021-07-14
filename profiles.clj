@@ -78,20 +78,38 @@
  ;; the following profile serves for two use cases:
  ;; * Launching `lein repl` from iTerm, that Emacs can eventually connect to
  ;; * Launching an in-Emacs JVM
+ ;; I don't directly use some of these libraries, but they are here (set to their latest version)
+ ;; for avoiding hitting `:pedantic?` warns in projects that set that option unconditionally.
  :emacs-backend      {:dependencies   [[clj-stacktrace "0.2.8"]
                                        [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
                                        [com.nedap.staffing-solutions/utils.collections "2.1.0"]
                                        [com.stuartsierra/component.repl "0.2.0"]
+                                       [com.stuartsierra/component "1.0.0"]
+                                       [com.stuartsierra/dependency "1.0.0"]
+                                       [com.nedap.staffing-solutions/utils.collections "2.2.0"]
                                        [criterium "0.4.5"]
-                                       [clj-kondo "2021.01.20"]
+                                       [com.gfredericks/lein-how-to-ns "0.2.9"]
+                                       [clj-kondo "2021.06.01"]
                                        [formatting-stack "4.3.0"]
                                        [org.clojure/clojurescript "1.10.764"] ;; formatting-stack transitive, removes a warning
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [lambdaisland/deep-diff2 "2.0.108"]
                                        [medley "1.2.0"]
+                                       [mvxcvi/puget "1.1.1"]
+                                       [fipp "0.6.23"]
+                                       [org.reflections/reflections "0.9.11"]
+                                       [mvxcvi/arrangement "1.2.1"]
                                        [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
-                                       [org.clojure/clojure "1.10.1"]
+                                       [org.clojure/clojure "1.10.2"]
+                                       [org.clojure/core.async "1.3.610"]
+                                       [org.clojure/core.cache "1.0.207"]
                                        [org.clojure/core.incubator "0.1.4"] ;; ensure it's recent enought to avoid a warning
+                                       [org.clojure/core.memoize "1.0.236"]
+                                       [org.clojure/core.rrb-vector "0.1.1"]
+                                       [org.clojure/data.csv "1.0.0"]
+                                       [org.clojure/data.json "2.0.1"]
+                                       [org.clojure/data.priority-map "1.0.0"]
+                                       [org.clojure/data.zip "1.0.0"]
                                        [org.clojure/math.combinatorics "0.1.6"]
                                        [org.clojure/test.check "1.1.0"]
                                        [org.clojure/java.jmx "1.0.0"]
@@ -101,14 +119,15 @@
                                        ;; `lein with-profile -user,-dev do clean, pom, jar`:
                                        [org.clojure/tools.nrepl "1.100.0"] ;; 0.2.13 matches with my lib/cider/cider.el. 1.99.0 is my fork
                                        [org.clojure/tools.reader "1.3.3"]
+                                       [rewrite-clj "1.0.594-alpha"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
                                        ;; Ensure Jackson is consistent and up-to-date:
-                                       [com.fasterxml.jackson.core/jackson-annotations "2.11.2"]
-                                       [com.fasterxml.jackson.core/jackson-core "2.11.2"]
-                                       [com.fasterxml.jackson.core/jackson-databind "2.11.2"]
-                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.11.2"]
-                                       [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 "2.11.2"]
-                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.11.2"]]
+                                       [com.fasterxml.jackson.core/jackson-annotations "2.12.3"]
+                                       [com.fasterxml.jackson.core/jackson-core "2.12.3"]
+                                       [com.fasterxml.jackson.core/jackson-databind "2.12.3"]
+                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.12.3"]
+                                       [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 "2.12.3"]
+                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.12.3"]]
 
                       :repositories   [["https://packagecloud.io/vemv/clojure/maven2"
                                         {:url "https://packagecloud.io/vemv/clojure/maven2"}]]
@@ -133,7 +152,6 @@
                                           [threatgrid/trapperkeeper-webserver-jetty9 "4.2.0"]]
                       :target-path       "target/%s/"
                       :source-paths      [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/clj"
-                                          "/Users/vemv/formatting-stack.alias-rewriter/src"
                                           ;; `lein with-profile -user cljx once`:
                                           "/Users/vemv/schema/target/generated/src/clj"]
                       :java-source-paths [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]
@@ -144,7 +162,7 @@
                                           "-Diroh.dev.logging.enable-file-appender=true"
                                           "-Diroh.dev.logging.order-chronologically=false"]}
 
- :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.3.0"]
+ :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.4.1" :exclusions [org.clojure/clojure]]
                                      [cider/cider-nrepl "0.99.9" :exclusions [cljfmt compliment nrepl/nrepl]]
                                      [compliment "0.3.11"]
                                      [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
