@@ -24,7 +24,7 @@
                                                  ;; Prevents trivial StackOverflow errors:
                                                  "-XX:MaxJavaStackTraceDepth=1000000"
                                                  ;; Set a generous limit as the maximum that can be allocated, preventing certain types of OOMs:
-                                                 "-Xmx18G"
+                                                 "-Xmx24G"
                                                  ;; increase stack size x6, for preventing SO errors:
                                                  ;;   (The current default can be found with
                                                  ;;    `java -XX:+PrintFlagsFinal -version 2>/dev/null | grep "intx ThreadStackSize"`)
