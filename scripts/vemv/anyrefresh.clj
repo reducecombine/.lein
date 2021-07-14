@@ -9,10 +9,6 @@
 
 ;; the eval business prevents `refactor-nrepl.analyzer/warm-ast-cache` from throwing "not found"
 
-(when-not (or (-> "user.dir" System/getProperty (.contains "/iroh"))
-              (-> "user.dir" System/getProperty (.contains "/ctia")))
-  (alter-var-root #'clojure.test/*load-tests* (constantly false)))
-
 (eval '(create-ns 'vemv-warm))
 
 (eval '(try
