@@ -52,7 +52,9 @@
                    "main"
                    "clojure"
                    "src/main/clojure"
-                   "src/test/clojure"]
+                   "src/test/clojure"
+                   ;; Eastwood:
+                   "test-third-party-deps"]
                   (filter (fn [^String x]
                             (some-> x java.io.File. .exists)))
                   (apply clojure.tools.namespace.repl/set-refresh-dirs))))))
