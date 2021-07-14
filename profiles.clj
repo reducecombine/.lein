@@ -7,7 +7,9 @@
                                                  [lein-jdk-tools "0.1.1"]
                                                  [threatgrid/trim-sl4j-classpath "0.2.0"]]
                       :dependencies             [[jonase/eastwood "0.8.1"]]
-                      :jvm-opts                 [;; Remove useless icon from the Dock:
+                      :jvm-opts                 [;; Disable all UI features for disabling the clipboard - for personal security:
+                                                 "-Djava.awt.headless=true"
+                                                 ;; Remove useless icon from the Dock:
                                                  "-Dapple.awt.UIElement=true"
                                                  ;; Make more info available to debuggers:
                                                  "-Dclojure.compiler.disable-locals-clearing=true"
