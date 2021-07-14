@@ -43,7 +43,8 @@
         n "vemv.nrepl.outside-refresh-dirs"
         v "server"
         fqn (symbol n v)
-        wrap-refactor (some-> 'refactor-nrepl.middleware/wrap-refactor requiring-resolve deref)
+        wrap-refactor (when-not (-> "user.dir" System/getProperty (.contains "/refactor-nrepl"))
+                        (some-> 'refactor-nrepl.middleware/wrap-refactor requiring-resolve deref))
         handler (cond-> @(requiring-resolve 'cider.nrepl/cider-nrepl-handler)
                   wrap-refactor wrap-refactor)
         base-lein-command (format "lein repl :connect %s" port)
