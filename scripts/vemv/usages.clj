@@ -14,18 +14,26 @@
     strategies/jvm-requirable-files
     strategies/namespaces-within-refresh-dirs-only]))
 
-(defn usages [var-name]
+(defn usages [named-thing]
   @formatting-stack.kondo-classpath-cache/classpath-cache
   (let [lint (project-files)
-        {{:keys [var-usages]} :analysis} (clj-kondo/run! {:config   {:output  {:analysis true}
-                                                                     :lint-as (:lint-as formatting-stack.linters.kondo/default-options)}
-                                                          :parallel true
-                                                          :lint     lint})
-        ns-to-find (-> var-name namespace symbol)
-        name-to-find (-> var-name name symbol)]
-    (->> var-usages
-         (keep (fn [{:keys [to name filename col row] :as v}]
-                 (when (and (= to ns-to-find)
+        k? (keyword? named-thing)
+        {{:keys [var-usages keywords]} :analysis} (clj-kondo/run! {:config   {:output  {:analysis {:keywords k?}}
+                                                                              :lint-as (:lint-as formatting-stack.linters.kondo/default-options)}
+                                                                   :parallel true
+                                                                   :lint     lint})
+        ns-to-find (-> named-thing namespace symbol)
+        name-to-find (cond-> named-thing
+                       true name
+                       (not k?) symbol)]
+    (->> (if k?
+           keywords
+           var-usages)
+         (keep (fn [{:keys [ns to name filename col row] :as v}]
+                 (when (and (= (if k?
+                                 ns
+                                 to)
+                               ns-to-find)
                             (= name name-to-find))
                    (string/replace (str filename ":" row ":" col)
                                    (str (System/getProperty "user.dir") "/")
