@@ -97,6 +97,7 @@
                                        [medley "1.2.0"]
                                        [mvxcvi/puget "1.1.1"]
                                        [fipp "0.6.23"]
+                                       [com.google.guava/guava "25.1-jre"]
                                        [mvxcvi/arrangement "1.2.1"]
                                        [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
                                        [org.clojure/clojure "1.10.2"]
