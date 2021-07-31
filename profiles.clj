@@ -130,7 +130,9 @@
                                        [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.12.3"]]
 
                       :repositories   [["https://packagecloud.io/vemv/clojure/maven2"
-                                        {:url "https://packagecloud.io/vemv/clojure/maven2"}]]
+                                        {:url "https://packagecloud.io/vemv/clojure/maven2"}]
+                                       ["https://packagecloud.io/vemv/cider/maven2"
+                                        {:url "https://packagecloud.io/vemv/cider/maven2"}]]
 
                       :source-paths   ["/Users/vemv/.lein/scripts"
                                        "/Users/vemv/formatting-stack.alias-rewriter/src"]
