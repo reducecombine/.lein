@@ -65,11 +65,11 @@
  {:jvm-opts
   ["-agentpath:/Applications/YourKit-Java-Profiler-2019.8.app/Contents/Resources/bin/mac/libyjpagent.dylib=quiet,sessionname={YOURKIT_SESSION_NAME}"]}
 
- :repl               {:middleware                        [leiningen.resolve-java-sources-and-javadocs/middleware
-                                                          leiningen.trim-sl4j-classpath/middleware]
-                      :plugins                           [[threatgrid/resolve-java-sources-and-javadocs "1.3.0"]]
+ :repl               {:middleware                        [cider.enrich-classpath/middleware]
+                      :plugins                           [[mx.cider/enrich-classpath "1.4.0-alpha2"]]
                       :resolve-java-sources-and-javadocs {:classifiers #{"sources"}}
-                      :jvm-opts                          ["-Dleiningen.resolve-java-sources-and-javadocs.throw=true"]}
+                      :enrich-classpath                  {:classifiers #{"sources"}}
+                      :jvm-opts                          ["-Dcider.enrich-classpath.throw=true"]}
 
  :clojars            {:deploy-repositories [["clojars"
                                              {:url           "https://clojars.org/repo/",
