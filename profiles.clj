@@ -149,21 +149,6 @@
 
  :emacs-backend-init {:repl-options {:init {:emacs-backend-init (clojure.core/require 'vemv.anyrefresh)}}}
 
- :iroh-global        {:dependencies      [[threatgrid/trapperkeeper "3.1.0" :exclusions [nrepl]]
-                                          [io.aeron/aeron-all "1.32.0"]
-                                          [threatgrid/trapperkeeper-webserver-jetty9 "4.2.0"]]
-                      :target-path       "target/%s/"
-                      :source-paths      [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/clj"
-                                          ;; `lein with-profile -user cljx once`:
-                                          "/Users/vemv/schema/target/generated/src/clj"]
-                      :java-source-paths [#_ "/Users/vemv/trapperkeeper-webserver-jetty9/test/java"]
-                      :jvm-opts          ["-Diroh.test.dotests.elide-explanations=true"
-                                          "-Diroh.dev.logging.level=:debug"
-                                          "-Diroh.dev.logging.enable-println-appender=false"
-                                          ;; "-Diroh.enable-response-profiling=true"
-                                          "-Diroh.dev.logging.enable-file-appender=true"
-                                          "-Diroh.dev.logging.order-chronologically=false"]}
-
  :parallel-reload    {:dependencies [[threatgrid/parallel-reload "0.4.1" :exclusions [org.clojure/clojure]]
 
                                      ;; How to create the following artifact:
