@@ -156,3 +156,7 @@
 (defn -main [& _]
   (start!))
 
+(do
+  ;; https://github.com/clojure-emacs/cider-nrepl/pull/701
+  (require 'cider.nrepl.middleware.stacktrace)
+  (alter-var-root #'cider.nrepl.middleware.stacktrace/directory-namespaces disj 'dev 'user))
