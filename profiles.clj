@@ -65,10 +65,13 @@
  ;; (added in a separate profile since some apps break on it)
  :async-checking     {:jvm-opts ["-Dclojure.core.async.go-checking=true"]}
 
- ;; remember to keep this in sync with exports.sh
  :yourkit
  {:jvm-opts
-  ["-agentpath:/Applications/YourKit-Java-Profiler-2019.8.app/Contents/Resources/bin/mac/libyjpagent.dylib=quiet,sessionname={YOURKIT_SESSION_NAME}"]}
+  ;; quiet - disable logging to stdout
+  ;; probe_on=com.yourkit.probes.builtin.Databases - enables the jdbc probe globally, for registering SQL query events
+  ;; sessionname={YOURKIT_SESSION_NAME} - gives the YourKit process a name,
+  ;;   based on `export YOURKIT_SESSION_NAME="$(basename $PWD)"`, which I do from my repl script
+  ["-agentpath:/Applications/YourKit-Java-Profiler-2020.9.app/Contents/Resources/bin/mac/libyjpagent.dylib=quiet,probe_on=com.yourkit.probes.builtin.Databases,sessionname={YOURKIT_SESSION_NAME}"]}
 
  :repl               {:middleware                        [cider.enrich-classpath/middleware]
                       :plugins                           [[mx.cider/enrich-classpath "1.4.0-alpha2"]]
