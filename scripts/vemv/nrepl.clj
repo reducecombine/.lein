@@ -156,12 +156,3 @@
 (defn -main [& _]
   (start!))
 
-(try ;; used in my .emacs for iroh
-  (require 'user.test)
-  (require 'user.format)
-  (defn iroh-after []
-    (-> 'user.test/lint-git-branch! resolve deref .invoke)
-    (-> 'user.format/clean-staged-namespaces! resolve deref .invoke)
-    (cisco.tools.namespace.parallel-refresh/gc-later))
-
-  (catch Exception _))
