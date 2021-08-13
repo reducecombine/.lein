@@ -11,6 +11,14 @@
 
 (eval '(create-ns 'vemv-warm))
 
+;; NOTE: requiring 'dev or 'user foils tools.namespace.parallel-refresh/compile-3rd-party-deps! if
+;; 'dev or 'user require the main codebase.
+;; currently it doesn't happen in my main work codebase.
+;; in many projects it happens.
+;; I should revisit my dev pattern. a dev vs. user separation might be due.
+
+;; (idea: parse user.clj / dev.clj without requiring those namespaces.)
+
 (eval '(try
          ;; Avoid `require`ing `dev` if it's not in this project
          ;; (given lein checkouts can bring extraneous dev nses)
@@ -18,7 +26,8 @@
                      "src/dev.clj"]
                     (some (fn [^String filename]
                             (-> filename java.io.File. .exists))))
-           (require 'dev))
+           ;; Don't require dev - can foil tools.namespace.parallel-refresh/compile-3rd-party-deps!
+           #_ (require 'dev))
 
          ;; maybe there was a namespaces called `dev`, but without any t.n setup:
          (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
@@ -34,7 +43,8 @@
                          "src/user.clj"]
                         (some (fn [^String filename]
                                 (-> filename java.io.File. .exists))))
-               (require 'user))
+               ;; Don't require `user` - can foil tools.namespace.parallel-refresh/compile-3rd-party-deps!
+               #_ (require 'user))
              (catch Exception _))
 
            (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
@@ -62,11 +72,8 @@
 (eval '(intern 'vemv-warm
                'vemv-warm
                (delay
-                 (when-not (or (-> "user.dir" System/getProperty (.contains "/iroh"))
-                               (-> "user.dir" System/getProperty (.contains "/ctia"))
-                               ;; ^ I found in yourkit that `warm-ast-cache` can be particularly slow in `ctia-investigate`
-                               ;; guard against file with intentionally broken syntax:
-                               (-> "user.dir" System/getProperty (.contains "/formatting-stack")))
+                 ;; guard against file with intentionally broken syntax:
+                 (when-not (-> "user.dir" System/getProperty (.contains "/formatting-stack"))
                    ;; XXX idea - warm only files in refresh dirs - not the whole classpath
                    #_ (refactor-nrepl.analyzer/warm-ast-cache)
                    ;; ^ disabled for now - I'm afraid it would analyze `vemv.anyrefresh` itself
@@ -76,6 +83,8 @@
                'init-fn
                com.stuartsierra.component.repl/initializer))
 
+;; commented out - foils tools.namespace.parallel-refresh/compile-3rd-party-deps! :
+#_
 (eval '(intern
         'vemv-warm
         'vemv-do-warm
@@ -86,7 +95,7 @@
             (do
               @vemv-warm/vemv-warm
               ;; invoke home-grown `reset` functions, e.g. https://git.io/Jff6j :
-              #_ (some-> 'user/reset resolve .invoke))
+              (some-> 'user/reset resolve .invoke))
             (when-let [v (try
                            (eval '(com.stuartsierra.component.repl/reset))
                            (future ;; wrap in a future - it is assumed projects with a System can be large:
@@ -105,10 +114,11 @@
                   (eval '(clojure.tools.namespace.repl/clear)))
                 (-> v .printStackTrace)))))))
 
-(let [v (eval '((or (resolve 'cisco.tools.namespace.parallel-refresh/refresh)
-                    (resolve 'clojure.tools.namespace.repl/refresh)) :after 'vemv-warm/vemv-do-warm))]
-  (when (instance? java.lang.Exception v)
-    (println v)))
+;; commented out - foils tools.namespace.parallel-refresh/compile-3rd-party-deps! :
+#_ (let [v (eval '((or (resolve 'cisco.tools.namespace.parallel-refresh/refresh)
+                       (resolve 'clojure.tools.namespace.repl/refresh)) :after 'vemv-warm/vemv-do-warm))]
+     (when (instance? java.lang.Exception v)
+       (println v)))
 
 ;; particularly useful for projects without a `t.n` setup whatsoever
 (let [used (->> *ns* ns-refers keys set)]
