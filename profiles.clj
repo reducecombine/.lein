@@ -16,6 +16,10 @@
                                                  "-Dclojure.compiler.disable-locals-clearing=true"
                                                  ;; If failing on startup, print stacktraces directly instead of saving them to a file:
                                                  "-Dclojure.main.report=stderr"
+                                                 ;; Changes nothing - just to remember how it's done:
+                                                 "-Dclojure.spec.skip-macros=false"
+                                                 ;; Changes nothing - just to remember how it's done:
+                                                 "-Dclojure.spec.compile-asserts=true"
                                                  ;; Enable tiered compilation, for guaranteeing accurate benchmarking (at the cost of slower startup):
                                                  "-XX:+TieredCompilation"
                                                  ;; Don't elide stacktraces:
