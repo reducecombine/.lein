@@ -11,6 +11,7 @@
                                                  "-Djava.awt.headless=true"
                                                  ;; Remove useless icon from the Dock:
                                                  "-Dapple.awt.UIElement=true"
+                                                 "-Dclash.dev.expound=true"
                                                  ;; Make more info available to debuggers:
                                                  "-Dclojure.compiler.disable-locals-clearing=true"
                                                  ;; If failing on startup, print stacktraces directly instead of saving them to a file:
