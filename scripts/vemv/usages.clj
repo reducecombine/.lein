@@ -16,7 +16,9 @@
 
 (defn usages [named-thing]
   @formatting-stack.kondo-classpath-cache/classpath-cache
-  (let [lint (project-files)
+  (let [named-thing (cond-> named-thing
+                      (var? named-thing) symbol)
+        lint (project-files)
         k? (keyword? named-thing)
         {{:keys [var-usages keywords]} :analysis} (clj-kondo/run! {:config   {:output  {:analysis {:keywords k?}}
                                                                               :lint-as (:lint-as formatting-stack.linters.kondo/default-options)}
