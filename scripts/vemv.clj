@@ -1,6 +1,8 @@
 (ns vemv
+  "For one-off code or experiments"
   (:require
    [clojure.java.shell :refer [sh]]
+   [clojure.spec.alpha :as spec]
    [formatting-stack.processors.test-runner]
    [clojure.test]
    [formatting-stack.linters.one-resource-per-ns]
@@ -42,3 +44,20 @@
          (sh "git" "commit")))
   (when (->> directives (some #{:p}))
     (sh "git" "push")))
+
+(def fdef @#'spec/fdef) ;; can take value of a macro after all
+
+(alter-var-root #'spec/fdef (constantly
+                             (fn [form env fn-sym & specs]
+                               (let [v (apply fdef form env fn-sym specs)
+                                     s (symbol (str fn-sym "--fdef-source"))]
+                                 (eval (list 'def
+                                             s
+                                             (list 'quote form)))
+                                 (alter-meta! (ns-resolve *ns* s)
+                                              assoc
+                                              :line (:line (meta form))
+                                              :column (:column (meta form)))
+                                 v))))
+
+(alter-meta! #'spec/fdef assoc :macro true)
