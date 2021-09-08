@@ -50,14 +50,16 @@
 (alter-var-root #'spec/fdef (constantly
                              (fn [form env fn-sym & specs]
                                (let [v (apply fdef form env fn-sym specs)
-                                     s (symbol (str fn-sym "--fdef-source"))]
+                                     s (symbol (str (name fn-sym)
+                                                    "--fdef-source"))
+                                     {:keys [line column]} (meta form)]
                                  (eval (list 'def
                                              s
                                              (list 'quote form)))
                                  (alter-meta! (ns-resolve *ns* s)
                                               assoc
-                                              :line (:line (meta form))
-                                              :column (:column (meta form)))
+                                              :line line
+                                              :column column)
                                  v))))
 
 (alter-meta! #'spec/fdef assoc :macro true)
