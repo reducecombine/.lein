@@ -63,3 +63,30 @@
                                  v))))
 
 (alter-meta! #'spec/fdef assoc :macro true)
+
+(defn run-tests [& namespaces]
+  (let [summary (-> (->> namespaces
+                         (reduce (bound-fn [r n]
+                                   (let [{:keys [fail error]
+                                          :as v} (clojure.test/test-ns n)
+                                         failed? (some pos? [fail error])
+                                         ret (merge-with + r v)]
+                                     (cond-> ret
+                                       failed? reduced)))
+                                 clojure.test/*initial-report-counters*))
+                    (assoc :type :summary))]
+    (clojure.test/do-report summary)
+    summary))
+
+(defn run-all-tests []
+  (->> (all-ns)
+       (filter (fn [n]
+                 (->> n
+                      ns-publics
+                      vals
+                      (some (fn [var-ref]
+                              {:pre [(var? var-ref)]}
+                              (-> var-ref meta :test))))))
+       (sort-by pr-str)
+       (reverse) ;; unit first
+       (apply run-tests)))
