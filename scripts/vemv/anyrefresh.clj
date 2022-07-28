@@ -74,10 +74,7 @@
                (delay
                  ;; guard against file with intentionally broken syntax:
                  (when-not (-> "user.dir" System/getProperty (.contains "/formatting-stack"))
-                   ;; XXX idea - warm only files in refresh dirs - not the whole classpath
-                   #_ (refactor-nrepl.analyzer/warm-ast-cache)
-                   ;; ^ disabled for now - I'm afraid it would analyze `vemv.anyrefresh` itself
-                   ))))
+                   (refactor-nrepl.analyzer/warm-ast-cache)))))
 
 (eval '(intern 'vemv-warm
                'init-fn
