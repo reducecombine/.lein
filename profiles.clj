@@ -3,7 +3,9 @@
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [threatgrid/lein-lean "0.6.0"]
                                                  [lein-lein "0.2.0"]
-                                                 [jonase/eastwood "1.2.4"]]
+                                                 [jonase/eastwood "1.2.4"]
+                                                 [lein-cloverage "1.2.3"]
+                                                 [com.github.clj-kondo/lein-clj-kondo "0.2.1"]]
                       :dependencies             [[jonase/eastwood "1.2.4"]]
                       :jvm-opts                 [;; Disable all UI features for disabling the clipboard - for personal security:
                                                  "-Djava.awt.headless=true"
