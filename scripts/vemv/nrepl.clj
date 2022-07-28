@@ -106,11 +106,10 @@
           (catch Throwable e
             (-> e .printStackTrace))))
 
-      ((requiring-resolve 'clipboard.core/spit) lein-command)
       (spit ".nrepl-port" (str port "\n"))
 
       (when large-project?
-        (println (format "Ready. Remember that Ctrl-C will terminate the JVM!\n  →  `%s` has been copied to the clipboard."
+        (println (format "Ready. Remember that Ctrl-C will terminate the JVM!"
                          base-lein-command))))
 
     (if large-project?

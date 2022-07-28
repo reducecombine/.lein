@@ -179,8 +179,7 @@
                                      ;; * package_cloud push vemv/clojure target/clojuresources-1.10.100.jar --coordinates=org.clojuresources:clojuresources:1.10.100
                                      [org.clojuresources/clojuresources "1.10.100"]]
 
-                      :jvm-opts     ["-Djava.awt.headless=false" ;; ensure the clipboard is usable
-                                     #_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
+                      :jvm-opts     [#_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
                                      ;; experiment - try triggering GC more frequently:
                                      ;; (didn't work originally, but it might after the SoftRef hack)
                                      ;; "-XX:MaxMetaspaceExpansion=0"
