@@ -19,6 +19,11 @@
                                                  "-Dclojure.spec.skip-macros=false"
                                                  ;; Changes nothing - just to remember how it's done:
                                                  "-Dclojure.spec.compile-asserts=true"
+                                                 "-Drefactor-nrepl.internal.try-requiring-tools-nrepl=true"
+                                                 ;; For very occasional debugging:
+                                                 #_"-Djavax.net.debug=all"
+                                                 #_"-Djavax.net.debug=ssl"
+                                                 #_"-Djavax.net.debug=help"
                                                  ;; Enable tiered compilation, for guaranteeing accurate benchmarking (at the cost of slower startup):
                                                  "-XX:+TieredCompilation"
                                                  ;; Don't elide stacktraces:
