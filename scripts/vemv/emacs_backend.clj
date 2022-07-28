@@ -47,6 +47,7 @@
 (clojure.core/require 'formatting-stack.core)
 (clojure.core/require 'formatting-stack.branch-formatter)
 (clojure.core/require 'formatting-stack.project-formatter)
+(clojure.core/require 'formatting-stack.strategies)
 (clojure.core/require 'clojure.test)
 (clojure.core/require 'clojure.string)
 (clojure.core/require 'clojure.reflect)
@@ -95,3 +96,55 @@
        (apply concat)
        distinct))
 
+(defn fs-min! []
+  (when (resolve 'formatting-stack.branch-formatter/default-formatters)
+    (let [target-branch "master"
+          f (fn [& {:as options}]
+              (medley.core/mapply formatting-stack.strategies/git-diff-against-default-branch (assoc options :target-branch target-branch)))
+          s1 [f
+              formatting-stack.strategies/git-completely-staged]
+          s2 [f
+              formatting-stack.strategies/git-completely-staged
+              formatting-stack.strategies/git-not-completely-staged]
+          get-out (cond-> #{:formatting-stack.formatters.cljfmt/id}
+                    (-> (System/getProperty "user.dir") (.contains "clash"))
+                    (conj :formatting-stack.formatters.clean-ns/id))
+          f (->> (@(resolve 'formatting-stack.branch-formatter/default-formatters) s1)
+                 (remove (comp get-out :id))
+                 (map (fn [{:keys [id] :as m}]
+                        (case id
+                          :formatting-stack.formatters.clean-ns/id
+                          (update m
+                                  :libspec-whitelist
+                                  conj
+                                  "matcher-combinators.test"
+                                  "manifold.executor"
+                                  "ring.core.spec")
+
+                          m))))
+          get-out (cond-> #{:formatting-stack.linters.ns-aliases/id
+                            :formatting-stack.linters.line-length/id
+                            :formatting-stack.linters.loc-per-ns/id}
+                    (or (-> (System/getProperty "user.dir") (.contains "eastwood"))
+                        (-> (System/getProperty "user.dir") (.contains "clash")))
+                    (conj :formatting-stack.linters.eastwood/id
+                          :formatting-stack.linters.one-resource-per-ns/id))
+          l (->> (@(resolve 'formatting-stack.branch-formatter/default-linters) s2)
+                 (remove (comp get-out :id)))]
+      (formatting-stack.core/format! :formatters f
+                                     :linters []
+                                     :in-background? false)
+      ;; avoid dangling classes (defrecord/defprotocol):
+      ;; (needs splitting fs-min! per refresh/reset)
+      ;; (also needs to be performed *before* refreshing)
+      #_ (when com.stuartsierra.component.repl/system
+           (com.stuartsierra.component.repl/stop))
+      (formatting-stack.core/format! :formatters []
+                                     :linters l
+                                     ;; linting needs to be serial, else orchestra can be affected:
+                                     :in-background? false)))
+
+  (when (-> (System/getProperty "user.dir") (.contains "clash"))
+    (some-> (resolve 'orchestra.spec.test/instrument)
+            deref
+            .call)))
