@@ -91,3 +91,9 @@
        (sort-by pr-str)
        (reverse) ;; unit first
        (apply run-tests)))
+
+(defmacro testing [string & body]
+  `(binding [clojure.test/*testing-contexts* (conj clojure.test/*testing-contexts* (str (clojure.string/trim (str ~string)) "\n"))]
+     ~@body))
+
+(alter-var-root #'clojure.test/testing (constantly @#'testing))
