@@ -160,3 +160,16 @@
   ;; https://github.com/clojure-emacs/cider-nrepl/pull/701
   (require 'cider.nrepl.middleware.stacktrace)
   (alter-var-root #'cider.nrepl.middleware.stacktrace/directory-namespaces disj 'dev 'user))
+
+(when (try
+        (require 'integrant.repl)
+        true
+        (catch Exception _ false))
+
+  (defn integrant-after []
+    ((requiring-resolve 'integrant.repl/resume))
+    ((requiring-resolve 'formatting-stack.core/format!)))
+
+  (defn integrant-reset []
+    ((requiring-resolve 'integrant.repl/suspend))
+    (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after)))
