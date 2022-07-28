@@ -157,7 +157,10 @@
 
                       :jvm-opts       ["-Dformatting-stack.eastwood.parallelize-linters=true"]
 
-                      :resource-paths [;; http://rebl.cognitect.com/download.html
+                      :resource-paths ["/Users/vemv/formatting-stack/resources"
+                                       "/Users/vemv/eastwood/resource"
+                                       "/Users/vemv/eastwood/resources"
+                                       ;; http://rebl.cognitect.com/download.html
                                        "/Users/vemv/.lein/resources/rebl.jar"]
 
                       :repl-options   {:port    41235
