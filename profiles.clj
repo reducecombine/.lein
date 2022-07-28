@@ -179,7 +179,7 @@
                                      [cider/cider-nrepl "0.99.9" :exclusions [cljfmt compliment nrepl/nrepl]]
                                      [compliment "0.3.11"]
                                      [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
-                                     [refactor-nrepl "2.4.0" :exclusions [org.clojure/tools.logging
+                                     [refactor-nrepl "3.5.3" :exclusions [org.clojure/tools.logging
                                                                           cider-nrepl
                                                                           nrepl]]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
