@@ -95,21 +95,3 @@
        (apply concat)
        distinct))
 
-;; Adds formatting-stack.strategies.impl/readable? + parallelism
-(alter-var-root #'refactor-nrepl.ns.libspecs/namespace-aliases
-                (constantly
-                 (fn vemv--namespace-aliases []
-                   (let [aliases-by-frequencies  #'refactor-nrepl.ns.libspecs/aliases-by-frequencies
-                         get-libspec-from-file-with-caching #'refactor-nrepl.ns.libspecs/get-libspec-from-file-with-caching]
-                     {:clj  (->> (find-in-project (every-pred (fn [f-or-s]
-                                                                (cond-> f-or-s
-                                                                  (instance? java.io.File f-or-s) (.getAbsolutePath)
-                                                                  true                            formatting-stack.strategies.impl/readable?))
-                                                              (some-fn refactor-nrepl.core/clj-file? refactor-nrepl.core/cljc-file?)))
-                                 (nedap.utils.collections.eager/partitioning-pmap (partial get-libspec-from-file-with-caching :clj))
-                                 aliases-by-frequencies)
-                      :cljs (if true
-                              [] ;; save some time since I'm not doing cljs atm
-                              (->> (find-in-project (some-fn refactor-nrepl.core/cljs-file? refactor-nrepl.core/cljc-file?))
-                                   (nedap.utils.collections.eager/partitioning-pmap (partial get-libspec-from-file-with-caching :cljs))
-                                   aliases-by-frequencies))}))))
