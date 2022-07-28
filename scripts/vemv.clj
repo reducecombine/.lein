@@ -97,3 +97,13 @@
      ~@body))
 
 (alter-var-root #'clojure.test/testing (constantly @#'testing))
+
+(doseq [i '[hash-map list map not-empty set vector vector-distinct fmap elements
+            bind choose fmap one-of such-that tuple sample return
+            large-integer* double* frequency shuffle]
+        :let [source (requiring-resolve (symbol "clojure.test.check.generators" (str i)))
+              dest (requiring-resolve (symbol "clojure.spec.gen.alpha" (str i)))
+              doc (-> source meta :doc)
+              arglists (-> source meta :arglists)]]
+  (alter-meta! dest merge {:arglists arglists
+                           :doc doc}))
