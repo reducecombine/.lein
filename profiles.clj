@@ -186,6 +186,9 @@
                                      ]
                       :aliases      {"nrepl" ["run" "-m" "vemv.nrepl"]}}
 
+ :cider-nrepl-latest {:dependencies [[cider/cider-nrepl "0.28.3" :exclusions [nrepl/nrepl]]
+                                     [nrepl/nrepl "0.9.0"]]}
+
  :emacs-figwheel     {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                      [figwheel-sidecar "0.5.16"]]
                       :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
