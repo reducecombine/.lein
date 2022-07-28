@@ -24,6 +24,13 @@
 (clojure.core/require 'criterium.core)
 (clojure.core/require 'clojure.tools.namespace.repl)
 (clojure.core/require 'com.stuartsierra.component.repl)
+
+(require 'refactor-nrepl.config)
+(alter-var-root #'refactor-nrepl.config/*config*
+                assoc
+                :print-right-margin nil
+                :print-miser-width nil)
+
 (future
   @refactor-nrepl.ns.class-search/available-classes-by-last-segment
   (@@#'refactor-nrepl.middleware/resolve-missing {:symbol "FileChannel"}))
