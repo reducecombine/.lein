@@ -72,7 +72,8 @@
                                          failed? (some pos? [fail error])
                                          ret (merge-with + r v)]
                                      (cond-> ret
-                                       failed? reduced)))
+                                       (or failed?
+                                           (-> (Thread/currentThread) .isInterrupted)) reduced)))
                                  clojure.test/*initial-report-counters*))
                     (assoc :type :summary))]
     (clojure.test/do-report summary)
