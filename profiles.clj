@@ -128,8 +128,8 @@
                                        [org.clojure/tools.trace "0.7.11"]
                                        [org.clojure/spec.alpha "0.2.194"]
                                        [org.clojure/tools.namespace "1.1.0"]
-                                       ;; `lein with-profile -user,-dev do clean, pom, jar`:
-                                       [org.clojure/tools.nrepl "1.100.0"] ;; 0.2.13 matches with my lib/cider/cider.el. 1.99.0 is my fork
+                                       ;; `lein with-profile -user,-dev do clean, install; lein with-profile -user,-dev do clean, pom, jar, clean, install; `:
+                                       [org.clojure/tools.nrepl "1.100.0"] ;; 0.2.13 matches with my lib/cider/cider.el. 1.100.0 is my fork
                                        [org.clojure/tools.reader "1.3.3"]
                                        [rewrite-clj "1.0.594-alpha"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
@@ -175,9 +175,8 @@
                                      ;; How to create the following artifact:
                                      ;; ~/cider-nrepl at `vemv` branch
                                      ;; ./build.sh
-                                     ;; package_cloud push vemv/cider target/cider-nrepl-0.99.9.jar
-                                     [cider/cider-nrepl "0.99.9" :exclusions [cljfmt compliment nrepl/nrepl]]
-                                     [compliment "0.3.11"]
+                                     ;; package_cloud push vemv/cider target/cider-nrepl-0.99.10.jar
+                                     [cider/cider-nrepl "0.99.10" :exclusions [nrepl/nrepl]]
                                      [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
                                      [refactor-nrepl "3.5.3" :exclusions [org.clojure/tools.logging
                                                                           cider-nrepl
@@ -185,12 +184,8 @@
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
                                      ;; How to create the following artifact:
                                      ;; mvn clean package
-                                     ;; package_cloud push vemv/clojure target/clojure-1.10.100.jar
-                                     [org.clojure/clojure "1.10.100"] ;; version 1.11 with weakref patch applied. (pretends to be 1.10 b/c of a kondo thing)
-                                     ;; How to create the following artifact:
-                                     ;; * rename sources package in target/ to clojuresources-1.10.100.jar
-                                     ;; * package_cloud push vemv/clojure target/clojuresources-1.10.100.jar --coordinates=org.clojuresources:clojuresources:1.10.100
-                                     [org.clojuresources/clojuresources "1.10.100"]]
+                                     ;; package_cloud push vemv/clojure target/clojure-1.11.900.jar
+                                     [org.clojure/clojure "1.11.900"]]
 
                       :jvm-opts     [#_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
                                      ;; experiment - try triggering GC more frequently:
