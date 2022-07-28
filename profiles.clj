@@ -79,9 +79,8 @@
   ["-agentpath:/Applications/YourKit-Java-Profiler-2020.9.app/Contents/Resources/bin/mac/libyjpagent.dylib=quiet,probe_on=com.yourkit.probes.builtin.Databases,sessionname={YOURKIT_SESSION_NAME}"]}
 
  :repl               {:middleware                        [cider.enrich-classpath/middleware]
-                      :plugins                           [[mx.cider/enrich-classpath "1.4.0-alpha2"]]
-                      :resolve-java-sources-and-javadocs {:classifiers #{"sources"}}
-                      :enrich-classpath                  {:classifiers #{"sources"}}
+                      :plugins                           [[mx.cider/enrich-classpath "1.9.0"]]
+                      :enrich-classpath                  {:shorten false}
                       :jvm-opts                          ["-Dcider.enrich-classpath.throw=true"]}
 
  :clojars            {:deploy-repositories [["clojars"
