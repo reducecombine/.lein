@@ -121,7 +121,7 @@
                                        [com.google.guava/guava "25.1-jre"]
                                        [mvxcvi/arrangement "1.2.1"]
                                        [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
-                                       [org.clojure/clojure "1.10.3"]
+                                       [org.clojure/clojure "1.11.1"]
                                        [org.clojure/core.async "1.5.648"]
                                        [org.clojure/core.cache "1.0.207"]
                                        [org.clojure/core.incubator "0.1.4"] ;; ensure it's recent enought to avoid a warning
@@ -194,9 +194,9 @@
                                                                           nrepl]]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
                                      ;; How to create the following artifact:
-                                     ;; mvn clean package
+                                     ;; mvn clean package clean install
                                      ;; package_cloud push vemv/clojure target/clojure-1.11.900.jar
-                                     [org.clojure/clojure "1.11.900"]]
+                                     [org.clojure/clojure "1.12.900"]]
 
                       :jvm-opts     [#_ "-Dcisco.tools.namespace.parallel-refresh.debug=true"
                                      ;; experiment - try triggering GC more frequently:
