@@ -1,5 +1,4 @@
-{:user               {:plugins                  [[com.github.liquidz/antq "RELEASE"]
-                                                 [lein-collisions "0.1.4"]
+{:user               {:plugins                  [[lein-collisions "0.1.4"]
                                                  [lein-pprint "1.1.2"]
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [threatgrid/lein-lean "0.6.0"]
@@ -42,6 +41,8 @@
                                                  ;; Enable various optimizations, for guaranteeing accurate benchmarking (at the cost of slower startup):
                                                  "-server"]
                       :monkeypatch-clojure-test false}
+
+ :antq {:plugins [[com.github.liquidz/antq "1.3.2"]]}
 
  ;; Simulates the maximum heap allocation that a process can have when Xmx is left unconfigured:
  :low-mem            {:jvm-opts ["-Xmx1G"]}
