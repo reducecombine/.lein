@@ -160,6 +160,8 @@
   (require 'cider.nrepl.middleware.stacktrace)
   (alter-var-root #'cider.nrepl.middleware.stacktrace/directory-namespaces disj 'dev 'user))
 
+(require 'tufte-auto.profiling)
+
 (when (try
         (require 'integrant.repl)
         true

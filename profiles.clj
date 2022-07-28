@@ -147,7 +147,13 @@
                                         {:url "https://packagecloud.io/vemv/cider/maven2"}]]
 
                       :source-paths   ["/Users/vemv/.lein/scripts"
-                                       "/Users/vemv/formatting-stack.alias-rewriter/src"]
+                                       "/Users/vemv/formatting-stack/src"
+                                       "/Users/vemv/formatting-stack/worker"
+                                       "/Users/vemv/formatting-stack.alias-rewriter/src"
+                                       "/Users/vemv/parallel-reload/src"
+                                       "/Users/vemv/eastwood/src"
+                                       "/Users/vemv/eastwood/copied-deps"
+                                       "/Users/vemv/tufte.auto/src"]
 
                       :jvm-opts       ["-Dformatting-stack.eastwood.parallelize-linters=true"]
 
