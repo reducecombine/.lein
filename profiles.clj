@@ -21,6 +21,7 @@
                                                  "-Dclojure.spec.skip-macros=false"
                                                  ;; Changes nothing - just to remember how it's done:
                                                  "-Dclojure.spec.compile-asserts=true"
+                                                 "-Dmidje.check-after-creation=false"
                                                  "-Drefactor-nrepl.internal.try-requiring-tools-nrepl=true"
                                                  ;; For very occasional debugging:
                                                  #_"-Djavax.net.debug=all"
