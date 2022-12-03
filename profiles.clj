@@ -49,6 +49,8 @@
                                                  "-server"]
                       :monkeypatch-clojure-test false}
 
+ :target-path {:target-path "target/%s"}
+
  :antq {:plugins [[com.github.liquidz/antq "1.9.874"]]}
 
  ;; Simulates the maximum heap allocation that a process can have when Xmx is left unconfigured:
