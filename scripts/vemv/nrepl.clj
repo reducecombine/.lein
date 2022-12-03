@@ -72,11 +72,6 @@
       (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
                                                             (some-> 'dev/stop resolve .invoke)))))
       (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
-                                                            (some-> 'formatting-stack.background/runner
-                                                                    resolve
-                                                                    deref
-                                                                    future-cancel)))))
-      (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
                                                             (try
                                                               (some-> fqn resolve stop-server)
                                                               (catch NullPointerException _))))))
