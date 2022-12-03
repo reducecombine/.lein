@@ -101,7 +101,8 @@
         (try
           (some-> (or (-> 'user/go resolve)
                       (-> 'dev/reset resolve)
-                      (-> 'user/reset resolve))
+                      (-> 'user/reset resolve)
+                      (-> 'integrant.repl/resume resolve))
                   .invoke)
           (catch Throwable e
             (-> e .printStackTrace))))
