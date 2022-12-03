@@ -50,9 +50,9 @@
         base-lein-command (format "lein repl :connect %s" port)
         lein-command (format "cd; LEIN_SILENT=true %s" base-lein-command)
         logfile (File. "log/dev.log")
-        large-project? (or (-> logfile .exists)
-                           (or (-> "user.dir" System/getProperty (.contains "/iroh"))
-                               (-> "user.dir" System/getProperty (.contains "/ctia"))))
+        large-project? (and (not (System/getenv "NO_TAILER"))
+                            (or (-> logfile .exists)
+                                (or (-> "user.dir" System/getProperty (.contains "mr-hankey")))))
         ^PrintStream system-out System/out] ;; keep logging in iTerm - not the nREPL-connected IDE repl
 
     (create-ns (symbol n))
