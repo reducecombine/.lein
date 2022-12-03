@@ -4,14 +4,15 @@
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [threatgrid/lein-lean "0.6.0"]
                                                  [lein-lein "0.2.0"]
-                                                 [jonase/eastwood "1.2.4"]
-                                                 [lein-cloverage "1.2.3"]
+                                                 [jonase/eastwood "1.3.0"]
+                                                 [lein-cloverage "1.2.4"]
                                                  [com.github.clj-kondo/lein-clj-kondo "0.2.1"]]
-                      :dependencies             [[jonase/eastwood "1.2.4"]]
+                      :dependencies             [[jonase/eastwood "1.3.0"]]
                       :jvm-opts                 [;; Disable all UI features for disabling the clipboard - for personal security:
                                                  "-Djava.awt.headless=true"
                                                  ;; Remove useless icon from the Dock:
                                                  "-Dapple.awt.UIElement=true"
+                                                 "-Dmr-hankey.dev.file-logging=true"
                                                  "-Dclash.dev.expound=true"
                                                  ;; Make more info available to debuggers:
                                                  "-Dclojure.compiler.disable-locals-clearing=true"
@@ -97,25 +98,29 @@
  :emacs-backend      {:dependencies   [[clj-stacktrace "0.2.8"]
                                        [com.clojure-goes-fast/clj-java-decompiler "0.2.1"]
                                        [com.nedap.staffing-solutions/utils.collections "2.1.0"]
-                                       [org.clojure/tools.deps.alpha "0.12.1120"]
+                                       [org.clojure/tools.deps.alpha "0.15.1244"
+                                        :exclusions
+                                        ;; important exclusion- it otherwise this dep causes log4j2 logging config to not be honored:
+                                        [org.slf4j/jcl-over-slf4j]]
                                        [com.stuartsierra/component.repl "0.2.0"]
                                        [spec-coerce "1.0.0-alpha16"]
                                        [com.stuartsierra/component "1.0.0"]
                                        [com.stuartsierra/dependency "1.0.0"]
                                        [prismatic/schema "1.1.9"]
                                        [com.taoensso/tufte "2.1.0"]
-                                       [com.taoensso/encore "3.19.0"]
+                                       [com.taoensso/encore "3.24.0"]
                                        [com.nedap.staffing-solutions/utils.collections "2.2.0"]
                                        [criterium "0.4.5"]
                                        [com.gfredericks/test.chuck "0.2.13"]
-                                       [clj-kondo "2022.06.22"]
+                                       [clj-kondo "2022.08.03"]
                                        [formatting-stack "4.6.0"]
-                                       [net.vemv/with "0.1.0"]
+                                       ;; XXX publish
+                                       #_ [net.vemv/with "0.1.0"]
                                        [frak "0.1.9"]
                                        [org.clojure/clojurescript "1.10.764"] ;; formatting-stack transitive, removes a warning
                                        [lambdaisland/deep-diff "0.0-29"]
                                        [lambdaisland/deep-diff2 "2.0.108"]
-                                       [medley "1.2.0"]
+                                       [medley "1.4.0"]
                                        [mvxcvi/puget "1.1.1"]
                                        [fipp "0.6.25"]
                                        [fmnoise/flow "4.1.0"]
@@ -134,7 +139,7 @@
                                        [org.clojure/data.priority-map "1.0.0"]
                                        [org.clojure/data.zip "1.0.0"]
                                        [org.clojure/math.combinatorics "0.1.6"]
-                                       [org.clojure/test.check "1.1.0"]
+                                       [org.clojure/test.check "1.1.1"]
                                        [org.clojure/java.jmx "1.0.0"]
                                        [org.clojure/tools.analyzer.jvm "1.2.2"]
                                        [org.clojure/tools.trace "0.7.11"]
@@ -143,16 +148,17 @@
                                        ;; `lein with-profile -user,-dev do clean, install; lein with-profile -user,-dev do clean, pom, jar, clean, install; `:
                                        [org.clojure/tools.nrepl "1.100.0"] ;; 0.2.13 matches with my lib/cider/cider.el. 1.100.0 is my fork
                                        [org.clojure/tools.reader "1.3.3"]
-                                       [rewrite-clj "1.0.699-alpha"]
+                                       [rewrite-clj "1.1.45"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
-                                       [zprint "1.2.3"]
+                                       [zprint "1.2.5"]
                                        ;; Ensure Jackson is consistent and up-to-date:
-                                       [com.fasterxml.jackson.core/jackson-annotations "2.12.3"]
-                                       [com.fasterxml.jackson.core/jackson-core "2.12.3"]
-                                       [com.fasterxml.jackson.core/jackson-databind "2.12.3"]
-                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.12.3"]
-                                       [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 "2.12.3"]
-                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.12.3"]]
+                                       [com.fasterxml.jackson.core/jackson-annotations "2.13.3"]
+                                       [com.fasterxml.jackson.core/jackson-core "2.13.3"]
+                                       [com.fasterxml.jackson.core/jackson-databind "2.13.3"]
+                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.13.3"]
+                                       [com.fasterxml.jackson.dataformat/jackson-dataformat-smile "2.13.3"]
+                                       [com.fasterxml.jackson.datatype/jackson-datatype-joda "2.13.3"]
+                                       [com.fasterxml.jackson.datatype/jackson-datatype-jsr310 "2.13.3"]]
 
                       :repositories   [["https://packagecloud.io/vemv/clojure/maven2"
                                         {:url "https://packagecloud.io/vemv/clojure/maven2"}]
@@ -191,7 +197,7 @@
                                      ;; package_cloud push vemv/cider target/cider-nrepl-0.99.10.jar
                                      [cider/cider-nrepl "0.99.10" :exclusions [nrepl/nrepl]]
                                      [nrepl/nrepl "0.4.4"] ;; same as refactor-nrepl "2.4.0" git.io/Jt26p
-                                     [refactor-nrepl "3.5.3" :exclusions [org.clojure/tools.logging
+                                     [refactor-nrepl "3.6.0" :exclusions [org.clojure/tools.logging
                                                                           cider-nrepl
                                                                           nrepl]]
                                      [commons-io/commons-io "2.8.0"] ;; for the Tailer class
