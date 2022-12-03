@@ -1,4 +1,5 @@
-{:user               {:plugins                  [[lein-collisions "0.1.4"]
+{:user               {:target-path              "target/%s"
+                      :plugins                  [[lein-collisions "0.1.4"]
                                                  [lein-pprint "1.1.2"]
                                                  [lein-subscribable-urls "0.1.0-alpha2"]
                                                  [threatgrid/lein-lean "0.6.0"]
