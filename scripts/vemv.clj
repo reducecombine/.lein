@@ -6,9 +6,14 @@
    [formatting-stack.processors.test-runner]
    [clojure.test]
    [formatting-stack.linters.one-resource-per-ns]
-   [lambdaisland.deep-diff]
    [clojure.string :as string]
+   [clojure.core.async :as a]
    [nedap.speced.def :as speced]))
+
+(defn pinto [parallelism coll xf xs]
+  (let [dest (a/chan)]
+    (a/pipeline parallelism dest xf (a/to-chan! xs))
+    (a/<!! (a/into coll dest))))
 
 (defn is=
   "Performs `(is = ...)`, reporting the diff between `expected` and `actual` when the test assertion fails."
@@ -20,8 +25,8 @@
                                 "\n") ;; place a newline so that prior strings and e.g. a large hashmap aren't rendered in the same line
                               (with-out-str
                                 (-> expected
-                                    (lambdaisland.deep-diff/diff actual)
-                                    (lambdaisland.deep-diff/pretty-print (lambdaisland.deep-diff/printer {:print-color false})))))
+                                    ((requiring-resolve 'lambdaisland.deep-diff/diff) actual)
+                                    ((requiring-resolve 'lambdaisland.deep-diff/pretty-print) ((requiring-resolve 'lambdaisland.deep-diff/printer) {:print-color false})))))
      (clojure.test/is (= expected actual)
                       desc))))
 

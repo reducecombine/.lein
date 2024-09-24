@@ -168,6 +168,7 @@
   "Returns a list of Java non-static fields and methods candidates."
   [prefix ns context]
   (let [context (macroexpanded-context context)]
+    (clojure.pprint/pprint context)
     (when (class-member-symbol? prefix)
       (let [prefix (subs prefix 1)
             inparts? (re-find #"[A-Z]" prefix)

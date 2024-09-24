@@ -14,14 +14,6 @@
 
 (require 'vemv.anyrefresh)
 
-(try
-  ;; explicit require so that refactor-nrepl can discover it
-  ;; NOTE: this must be placed before any refactor-nrepl require.
-  (require 'clojure.tools.nrepl)
-  (catch Exception _
-    ;; most people don't use c.t.nrepl
-    ))
-
 ;; allows Ctrl+C to interrupt long running tasks
 (defn handle-sigint-form []
   `(let [thread# (Thread/currentThread)]
@@ -34,11 +26,8 @@
     (catch java.lang.IllegalMonitorStateException _))
   (let [port (or (some-> "NREPL_PORT" System/getenv Long/parseLong)
                  (+ 20000 (rand-int 20000)))
-        ;; Make it possible to use the legacy c.t.nrepl - which some people might need:
-        start-server (or (requiring-resolve 'clojure.tools.nrepl.server/start-server)
-                         (requiring-resolve 'nrepl.server/start-server))
-        stop-server (or (requiring-resolve 'clojure.tools.nrepl.server/stop-server)
-                        (requiring-resolve 'nrepl.server/stop-server))
+        start-server (requiring-resolve 'nrepl.server/start-server)
+        stop-server (requiring-resolve 'nrepl.server/stop-server)
 
         n "vemv.nrepl.outside-refresh-dirs"
         v "server"
@@ -51,15 +40,14 @@
         lein-command (format "cd; LEIN_SILENT=true %s" base-lein-command)
         logfile (File. "log/dev.log")
         large-project? (or (-> logfile .exists)
-                           (or (-> "user.dir" System/getProperty (.contains "/iroh"))
-                               (-> "user.dir" System/getProperty (.contains "/ctia"))))
+                           (-> "user.dir" System/getProperty (.contains "/warmer")))
         ^PrintStream system-out System/out] ;; keep logging in iTerm - not the nREPL-connected IDE repl
 
     (create-ns (symbol n))
 
     (when-not (resolve fqn)
 
-      (-> logfile .delete)
+      #_(-> logfile .delete) ;; Better not to delete - can create problems (e.g. the app won't re-create the file)
 
       (intern (symbol n)
               (symbol v)
@@ -71,11 +59,12 @@
                                                             (shutdown-agents)))))
       (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
                                                             (some-> 'dev/stop resolve .invoke)))))
-      (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
-                                                            (some-> 'formatting-stack.background/runner
-                                                                    resolve
-                                                                    deref
-                                                                    future-cancel)))))
+      ;; it's no longer a future
+      #_ (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
+                                                               (some-> 'formatting-stack.background/runner
+                                                                       resolve
+                                                                       deref
+                                                                       future-cancel)))))
       (-> (Runtime/getRuntime) (.addShutdownHook (Thread. (fn []
                                                             (try
                                                               (some-> fqn resolve stop-server)
@@ -155,22 +144,17 @@
 (defn -main [& _]
   (start!))
 
-(do
-  ;; https://github.com/clojure-emacs/cider-nrepl/pull/701
-  (require 'cider.nrepl.middleware.stacktrace)
-  (alter-var-root #'cider.nrepl.middleware.stacktrace/directory-namespaces disj 'dev 'user))
+#_ (do
+     ;; https://github.com/clojure-emacs/cider-nrepl/pull/701
+     (require 'cider.nrepl.middleware.stacktrace)
+     (alter-var-root #'cider.nrepl.middleware.stacktrace/directory-namespaces disj 'dev 'user))
 
 (require 'tufte-auto.profiling)
 
-(when (try
-        (require 'integrant.repl)
-        true
-        (catch Exception _ false))
+(defn integrant-after []
+  ((requiring-resolve 'integrant.repl/resume))
+  #_ ((requiring-resolve 'formatting-stack.core/format!)))
 
-  (defn integrant-after []
-    ((requiring-resolve 'integrant.repl/resume))
-    ((requiring-resolve 'formatting-stack.core/format!)))
-
-  (defn integrant-reset []
-    ((requiring-resolve 'integrant.repl/suspend))
-    (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after)))
+(defn integrant-reset []
+  ((requiring-resolve 'integrant.repl/suspend))
+  (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after))

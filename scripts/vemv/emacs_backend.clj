@@ -2,16 +2,17 @@
   "Performs `require`s that my Emacs setup assumes."
   (:require
    [clojure.java.io :as io]
+   [vemv.tap]
    [vemv.usages]
    [vemv]))
 
-(try
-  ;; explicit require so that refactor-nrepl can discover it
-  ;; NOTE: this must be placed before any refactor-nrepl require.
-  (require 'clojure.tools.nrepl)
-  (catch Exception _
-    ;; most people don't use c.t.nrepl
-    ))
+#_ (try
+     ;; explicit require so that refactor-nrepl can discover it
+     ;; NOTE: this must be placed before any refactor-nrepl require.
+     (require 'clojure.tools.nrepl)
+     (catch Exception _
+       ;; most people don't use c.t.nrepl
+       ))
 
 (clojure.core/require 'clj-stacktrace.repl)
 (clojure.core/require 'refactor-nrepl.core)
@@ -20,7 +21,6 @@
 (clojure.core/require 'refactor-nrepl.ns.class-search)
 (clojure.core/require 'net.vemv.nrepl-debugger)
 (clojure.core/require 'clj-java-decompiler.core)
-(clojure.core/require 'lambdaisland.deep-diff)
 (clojure.core/require 'criterium.core)
 (clojure.core/require 'clojure.tools.namespace.repl)
 (clojure.core/require 'com.stuartsierra.component.repl)
@@ -62,17 +62,17 @@
                                          ;; a linting function apt for a broader selection of projects.
                                          'lint!
                                          (fn [& [full?]]
-                                           (formatting-stack.core/format!
-                                            :formatters []
-                                            :in-background? false
-                                            ;; better no eastwood in unknown projects.
-                                            :linters [#_ (-> (formatting-stack.linters.eastwood/new {})
-                                                             (assoc :strategies (conj (if full?
-                                                                                        formatting-stack.project-formatter/default-strategies
-                                                                                        formatting-stack.defaults/extended-strategies)
-                                                                                      formatting-stack.strategies/exclude-cljs
-                                                                                      formatting-stack.strategies/jvm-requirable-files
-                                                                                      formatting-stack.strategies/namespaces-within-refresh-dirs-only)))]))))
+                                           #_ (formatting-stack.core/format!
+                                               :formatters []
+                                               :in-background? false
+                                               ;; better no eastwood in unknown projects.
+                                               :linters [#_ (-> (formatting-stack.linters.eastwood/new {})
+                                                                (assoc :strategies (conj (if full?
+                                                                                           formatting-stack.project-formatter/default-strategies
+                                                                                           formatting-stack.defaults/extended-strategies)
+                                                                                         formatting-stack.strategies/exclude-cljs
+                                                                                         formatting-stack.strategies/jvm-requirable-files
+                                                                                         formatting-stack.strategies/namespaces-within-refresh-dirs-only)))]))))
 
 (require 'nedap.utils.collections.eager)
 
@@ -131,18 +131,18 @@
                           :formatting-stack.linters.one-resource-per-ns/id))
           l (->> (@(resolve 'formatting-stack.branch-formatter/default-linters) s2)
                  (remove (comp get-out :id)))]
-      (formatting-stack.core/format! :formatters f
-                                     :linters []
-                                     :in-background? false)
+      #_ (formatting-stack.core/format! :formatters f
+                                        :linters []
+                                        :in-background? false)
       ;; avoid dangling classes (defrecord/defprotocol):
       ;; (needs splitting fs-min! per refresh/reset)
       ;; (also needs to be performed *before* refreshing)
       #_ (when com.stuartsierra.component.repl/system
            (com.stuartsierra.component.repl/stop))
-      (formatting-stack.core/format! :formatters []
-                                     :linters l
-                                     ;; linting needs to be serial, else orchestra can be affected:
-                                     :in-background? false)))
+      #_ (formatting-stack.core/format! :formatters []
+                                        :linters l
+                                        ;; linting needs to be serial, else orchestra can be affected:
+                                        :in-background? false)))
 
   (when (-> (System/getProperty "user.dir") (.contains "clash"))
     (some-> (resolve 'orchestra.spec.test/instrument)

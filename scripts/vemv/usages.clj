@@ -1,12 +1,20 @@
-(ns vemv.usages
-  (:require
-   [clj-kondo.core :as clj-kondo]
-   [clojure.pprint :refer [pprint]]
-   [formatting-stack.core]
-   [formatting-stack.linters.kondo]
-   [formatting-stack.kondo-classpath-cache]
-   [formatting-stack.strategies :as strategies]
-   [clojure.string :as string]))
+(ns vemv.usages)
+
+(require 'babashka.fs)
+
+(when-not (resolve 'babashka.fs/unixify)
+  ;; Rama can mess up this - fix it:
+  (intern 'babashka.fs 'unixify (fn [f]
+                                  (str f))))
+
+(require
+ '[clj-kondo.core :as clj-kondo]
+ '[clojure.pprint :refer [pprint]]
+ '[formatting-stack.core]
+ '[formatting-stack.linters.kondo]
+ '[formatting-stack.kondo-classpath-cache]
+ '[formatting-stack.strategies :as strategies]
+ '[clojure.string :as string])
 
 (defn project-files []
   (formatting-stack.core/files-from-strategies

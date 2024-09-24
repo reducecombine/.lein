@@ -4,8 +4,13 @@
 
   It also warms the 'AST cache' for refactor-nrepl in a way that is integrated with the mentioned setup."
   (:require
+   [nrepl.misc :refer [response-for]]
+   [nrepl.transport :as transport]
+   [cisco.tools.namespace.parallel-refresh :as parallel-refresh]
    [clojure.tools.namespace.repl]
    [com.stuartsierra.component.repl]))
+
+(require 'cider.nrepl.middleware.refresh)
 
 ;; the eval business prevents `refactor-nrepl.analyzer/warm-ast-cache` from throwing "not found"
 
@@ -51,18 +56,35 @@
              (->> ["dev"
                    "libs"
                    "modules"
-                   (when-not (-> "src/main/clojure"
-                                 java.io.File.
-                                 .exists)
+                   (when-not (or (-> "src/main/clojure"
+                                     java.io.File.
+                                     .exists)
+                                 (-> "src/main"
+                                     java.io.File.
+                                     .exists)
+                                 (-> "src/clj"
+                                     java.io.File.
+                                     .exists)
+                                 (-> "src/dev"
+                                     java.io.File.
+                                     .exists))
                      "src")
-                   (when-not (-> "test/main/clojure"
-                                 java.io.File.
-                                 .exists)
+                   (when-not (or (-> "test/main/clojure"
+                                     java.io.File.
+                                     .exists)
+                                 (-> "test/clj"
+                                     java.io.File.
+                                     .exists))
                      "test")
                    "main"
                    "clojure"
-                   "src/main/clojure"
                    "src/test/clojure"
+                   "src/main/clojure"
+                   "src/main"
+                   "src/clj"
+                   "src/test"
+                   "src/dev"
+                   "test/clj"
                    ;; Eastwood:
                    "test-third-party-deps"]
                   (filter (fn [^String x]
@@ -124,3 +146,45 @@
        (vec)
        (list 'clojure.tools.namespace.repl :only)
        (apply refer)))
+
+(when (find-ns 'nrepl.core) ;; if found, it means we're running CIDER latest + jack in, which is different from my approach (`vemv.nrepl`)
+  (cisco.tools.namespace.parallel-refresh/refresh))
+
+(defn integrant-after []
+  ((requiring-resolve 'integrant.repl/resume))
+  #_ ((requiring-resolve 'formatting-stack.core/format!)))
+
+(defn integrant-reset []
+  ((requiring-resolve 'integrant.repl/suspend))
+  (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after))
+
+;; Make cider-nrepl use parallel refresh:
+#_ (alter-var-root #'cider.nrepl.middleware.refresh/refresh-reply
+                   (constantly
+                    (fn [{:keys [dirs transport session id] :as msg}]
+                      (let [{:keys [exec]} (meta session)]
+                        (exec id
+                              (fn []
+                                (fn [tracker]
+                                  (try
+                                    (tap> ::reloading)
+                                    (#'middleware.refresh/before-reply msg)
+                                    (#'middleware.refresh/reloading-reply clojure.tools.namespace.repl/refresh-tracker msg)
+                                    (parallel-refresh/refresh {:after nil}) ;; :after already handled below
+                                    (let [tracker-after clojure.tools.namespace.repl/refresh-tracker]
+                                      (#'middleware.refresh/result-reply tracker-after msg)
+                                      (#'middleware.refresh/after-reply tracker-after msg))
+
+                                    (catch Throwable e
+                                      (#'middleware.refresh/error-reply {:error e} msg)))))
+                              (fn []
+                                (transport/send transport (response-for msg {:status :done}))))))))
+#_
+(alter-var-root #'cider.nrepl.middleware.refresh/clear-reply
+                (constantly (fn [{:keys [transport session id] :as msg}]
+                              (let [{:keys [exec]} (meta session)]
+                                (exec id
+                                      (fn []
+                                        (clojure.tools.namespace.repl/clear))
+                                      (fn []
+                                        (transport/send transport (response-for msg {:status :done}))))))))
