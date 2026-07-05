@@ -1,11 +1,14 @@
 (ns vemv.usages)
 
-(require 'babashka.fs)
+(require '[babashka.fs :as fs])
 
 (when-not (resolve 'babashka.fs/unixify)
   ;; Rama can mess up this - fix it:
   (intern 'babashka.fs 'unixify (fn [f]
                                   (str f))))
+
+(when (fs/exists? ".clj-kondo/cache")
+  (fs/delete-tree ".clj-kondo/cache" {:force true}))
 
 (require
  '[clj-kondo.core :as clj-kondo]

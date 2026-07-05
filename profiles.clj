@@ -124,9 +124,9 @@
                                        [com.gfredericks/test.chuck "0.2.13"]
 
                                        ;; Bump these in concert:
-                                       [clj-kondo "2024.03.13"]
-                                       [borkdude/edamame "1.4.25"]
-                                       [babashka/fs "0.5.20"]
+                                       [clj-kondo "2026.05.25"]
+                                       [borkdude/edamame "1.5.39"]
+                                       [babashka/fs "0.5.33"]
 
                                        [nubank/matcher-combinators "3.8.8"]
                                        [formatting-stack "4.6.0" :exclusions [cljfmt]]
@@ -169,7 +169,7 @@
                                        [org.clojure/tools.namespace "1.4.4"]
                                        ;; `lein with-profile -user,-dev do clean, install; lein with-profile -user,-dev do clean, pom, jar, clean, install; `:
                                        #_ [org.clojure/tools.nrepl "1.100.0"] ;; 0.2.13 matches with my lib/cider/cider.el. 1.100.0 is my fork
-                                       [org.clojure/tools.reader "1.3.3"]
+                                       [org.clojure/tools.reader "1.3.6"]
                                        [rewrite-clj "1.1.47"]
                                        [threatgrid/formatting-stack.are-linter "0.1.0-alpha1"]
                                        [zprint "1.2.3"]
