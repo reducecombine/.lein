@@ -150,7 +150,6 @@
                                        [fmnoise/flow "4.1.0"]
                                        [io.aviso/pretty "1.1.1"]
                                        [mvxcvi/arrangement "1.2.1"]
-                                       [nrepl-debugger "0.1.0-SNAPSHOT" :exclusions [nrepl]]
                                        [org.clojure/core.async "1.5.648"]
                                        [org.clojure/core.cache "1.0.207"]
                                        [org.clojure/core.incubator "0.1.4"] ;; ensure it's recent enought to avoid a warning

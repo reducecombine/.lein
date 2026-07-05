@@ -19,7 +19,6 @@
 (clojure.core/require 'refactor-nrepl.middleware)
 (clojure.core/require 'refactor-nrepl.analyzer)
 (clojure.core/require 'refactor-nrepl.ns.class-search)
-(clojure.core/require 'net.vemv.nrepl-debugger)
 (clojure.core/require 'clj-java-decompiler.core)
 (clojure.core/require 'criterium.core)
 (clojure.core/require 'clojure.tools.namespace.repl)
