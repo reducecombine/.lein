@@ -8,8 +8,9 @@
                                                  [com.github.clj-kondo/lein-clj-kondo "2024.03.13"]]
                       :dependencies             [[jonase/eastwood "1.4.2"]]
                       :jvm-opts                 [;; Disable all UI features for disabling the clipboard - for personal security:
-                                                 "-Djava.awt.headless=true"
+                                                 ;; "-Djava.awt.headless=true" ;; conficts with sth atm
                                                  "-Dmush.enable-tap-logger=true"
+                                                 "-Dcollage.enable-tap-logger=true"
                                                  ;; Remove useless icon from the Dock:
                                                  "-Dapple.awt.UIElement=true"
                                                  ;; Make more info available to debuggers:
@@ -18,6 +19,9 @@
                                                  "-Dclojure.main.report=stderr"
                                                  ;; Changes nothing - just to remember how it's done:
                                                  "-Dclojure.spec.skip-macros=false"
+                                                 "-Dguardrails.enabled=false"
+                                                 "-Dguardrails.silent=true"
+                                                 "-Dcollage-test-use-testcontainers=true"
                                                  "-Dclojure.spec.compile-asserts=true"
                                                  "-Dclojure.spec.check-asserts=true"
                                                  ;; Changes nothing - just to remember how it's done:
