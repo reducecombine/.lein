@@ -25,6 +25,13 @@
 ;; (idea: parse user.clj / dev.clj without requiring those namespaces.)
 
 (eval '(try
+         ;; stuff that might help avoiding a tools.namespace.parallel-refresh/compile-3rd-party-deps! issue:
+         (try (require 'malli.core) (catch Throwable _))
+         (try (require 'reitit.coercion.malli) (catch Throwable _))
+         (try (require 'clojure.tools.reader) (catch Throwable _))
+         (try (require 'hugsql.parser) (catch Throwable _))
+         (try (require 'clojure.tools.reader.edn) (catch Throwable _))
+
          ;; Avoid `require`ing `dev` if it's not in this project
          ;; (given lein checkouts can bring extraneous dev nses)
          (when (->> ["dev/dev.clj"
