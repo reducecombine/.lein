@@ -2,7 +2,7 @@
   (:require
    [vemv.emacs-backend]
    [clojure.tools.namespace.repl]
-   [cisco.tools.namespace.parallel-refresh]
+   #_ [cisco.tools.namespace.parallel-refresh]
    [rebel-readline.clojure.line-reader]
    [rebel-readline.clojure.main]
    [rebel-readline.core])
@@ -21,9 +21,10 @@
                                         (-> thread# .stop)))))
 
 (defn start!* [& [skip-reset?]]
-  (try
-    (-> cisco.tools.namespace.parallel-refresh/refresh-lock .unlock)
-    (catch java.lang.IllegalMonitorStateException _))
+  ;; temp disabled - Sty project
+  #_ (try
+       (-> cisco.tools.namespace.parallel-refresh/refresh-lock .unlock)
+       (catch java.lang.IllegalMonitorStateException _))
   (let [port (or (some-> "NREPL_PORT" System/getenv Long/parseLong)
                  (+ 20000 (rand-int 20000)))
         start-server (requiring-resolve 'nrepl.server/start-server)
@@ -86,16 +87,16 @@
                        true ;; reOpen https://issues.apache.org/jira/browse/IO-399
                        IOUtils/DEFAULT_BUFFER_SIZE))
 
-      (when-not skip-reset?
-        (try
-          (some-> (or (-> 'user/go resolve)
-                      (-> 'dev/reset resolve)
-                      (-> 'user/reset resolve))
-                  .invoke)
-          (catch Throwable e
-            (-> e .printStackTrace))))
+      #_ (when-not skip-reset?
+           (try
+             (some-> (or (-> 'user/go resolve)
+                         (-> 'dev/reset resolve)
+                         (-> 'user/reset resolve))
+                     .invoke)
+             (catch Throwable e
+               (-> e .printStackTrace))))
 
-      (spit ".nrepl-port" (str port "\n"))
+      (spit ".nrepl-port" (str port))
 
       (when large-project?
         (println (format "Ready. Remember that Ctrl-C will terminate the JVM!"
@@ -111,6 +112,9 @@
                    (in-ns 'dev)))
          :eval (fn [form]
                  (eval `(do ~(handle-sigint-form) ~form)))})))))
+
+(defn start-skip-reset []
+  (start!* :skip-reset))
 
 (defn start!
   "Meant for usage from a terminal.
@@ -135,11 +139,25 @@
   (when-not (seq clojure.tools.namespace.repl/refresh-dirs)
     (clojure.tools.namespace.repl/set-refresh-dirs "src" "dev" "test"))
 
-  (cisco.tools.namespace.parallel-refresh/compile-3rd-party-deps!)
 
-  (let [v (cisco.tools.namespace.parallel-refresh/refresh :after `start!*)]
-    (when-not (#{:ok cisco.tools.namespace.parallel-refresh/ok-result-marker} v)
-      (start!* :skip-reset))))
+  ;; XXX PENDING to attempt: require these (one try block per ns) and enable parallel-refresh again
+  (comment
+    (require 'malli.core) ;; might help avoiding a tools.namespace.parallel-refresh/compile-3rd-party-deps! issue
+    (require 'reitit.coercion.malli)
+    (require 'clojure.tools.reader)
+    (require 'hugsql.parser)
+    (require 'clojure.tools.reader.edn))
+
+  ;; temp disabled - Sty project
+  #_ (cisco.tools.namespace.parallel-refresh/compile-3rd-party-deps!)
+
+  ;; temp disabled - Sty project
+  #_ (let [v (cisco.tools.namespace.parallel-refresh/refresh :after `start!*)]
+       (when-not (#{:ok cisco.tools.namespace.parallel-refresh/ok-result-marker} v)
+         (start!* :skip-reset)))
+
+  #_ (clojure.tools.namespace.repl/refresh :after `start-skip-reset) ;; if refresh fails, repl never starts
+  (start-skip-reset))
 
 (defn -main [& _]
   (start!))
@@ -157,4 +175,7 @@
 
 (defn integrant-reset []
   ((requiring-resolve 'integrant.repl/suspend))
-  (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after))
+  ;; temp disabled - Sty project
+  #_ (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after)
+  (clojure.tools.namespace.repl/refresh :after `integrant-after)
+  )

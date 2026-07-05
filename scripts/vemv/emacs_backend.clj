@@ -35,15 +35,17 @@
   @refactor-nrepl.ns.class-search/available-classes-by-last-segment
   (@@#'refactor-nrepl.middleware/resolve-missing {:symbol "FileChannel"}))
 
-(when (try
-        (clojure.core/require 'cisco.tools.namespace.parallel-refresh)
-        true
-        (catch Exception _
-          false))
-  (alter-var-root (resolve 'clojure.tools.namespace.repl/refresh)
-                  (fn [& _]
-                    ;; Don't @ it - better to leave it redefable
-                    (resolve 'cisco.tools.namespace.parallel-refresh/refresh))))
+;; temp disabled - Sty project
+#_ (when (try
+           (clojure.core/require 'cisco.tools.namespace.parallel-refresh)
+           true
+           (catch Exception _
+             false))
+     (alter-var-root (resolve 'clojure.tools.namespace.repl/refresh)
+                     (fn [& _]
+                       ;; Don't @ it - better to leave it redefable
+                       (resolve 'cisco.tools.namespace.parallel-refresh/refresh))))
+
 (clojure.core/require 'formatting-stack.core)
 (clojure.core/require 'formatting-stack.branch-formatter)
 (clojure.core/require 'formatting-stack.project-formatter)

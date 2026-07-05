@@ -6,7 +6,7 @@
   (:require
    [nrepl.misc :refer [response-for]]
    [nrepl.transport :as transport]
-   [cisco.tools.namespace.parallel-refresh :as parallel-refresh]
+   #_ [cisco.tools.namespace.parallel-refresh :as parallel-refresh]
    [clojure.tools.namespace.repl]
    [com.stuartsierra.component.repl]))
 
@@ -147,8 +147,9 @@
        (list 'clojure.tools.namespace.repl :only)
        (apply refer)))
 
-(when (find-ns 'nrepl.core) ;; if found, it means we're running CIDER latest + jack in, which is different from my approach (`vemv.nrepl`)
-  (cisco.tools.namespace.parallel-refresh/refresh))
+;; disabled - Sty project giving me problems
+#_ (when (find-ns 'nrepl.core) ;; if found, it means we're running CIDER latest + jack in, which is different from my approach (`vemv.nrepl`)
+     (cisco.tools.namespace.parallel-refresh/refresh))
 
 (defn integrant-after []
   ((requiring-resolve 'integrant.repl/resume))
@@ -156,7 +157,7 @@
 
 (defn integrant-reset []
   ((requiring-resolve 'integrant.repl/suspend))
-  (cisco.tools.namespace.parallel-refresh/refresh :after `integrant-after))
+  (#_ cisco.tools.namespace.parallel-refresh/refresh clojure.tools.namespace.repl/refresh :after `integrant-after))
 
 ;; Make cider-nrepl use parallel refresh:
 #_ (alter-var-root #'cider.nrepl.middleware.refresh/refresh-reply
