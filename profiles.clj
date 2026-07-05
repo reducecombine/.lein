@@ -84,7 +84,8 @@
  :async-checking     {:jvm-opts ["-Dclojure.core.async.go-checking=true"]}
 
  :yourkit
- {:jvm-opts
+ {#_ #_
+  :jvm-opts
   ;; quiet - disable logging to stdout
   ;; probe_on=com.yourkit.probes.builtin.Databases - enables the jdbc probe globally, for registering SQL query events
   ;; sessionname={YOURKIT_SESSION_NAME} - gives the YourKit process a name,
