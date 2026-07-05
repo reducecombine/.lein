@@ -8,9 +8,9 @@
   [^long n coll x]
   (let [b (== (count coll) n)]
     (cond-> (cons x coll)
-      b rest)))
+      b butlast)))
 
-(def queue-size (atom 16))
+(def queue-size (atom 10000))
 
 (def taps-queue (atom (queue)))
 
