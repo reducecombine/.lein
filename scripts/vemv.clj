@@ -84,7 +84,9 @@
     (clojure.test/do-report summary)
     summary))
 
-(defn run-all-tests []
+(defn run-all-tests
+  "Runs all tests found in the runtime, with fail-fast capabilities."
+  []
   (->> (all-ns)
        (filter (fn [n]
                  (->> n
